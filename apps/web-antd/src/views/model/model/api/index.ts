@@ -10,10 +10,7 @@ import { alovaInstance } from '#/utils/http';
  * @returns 模型列表
  */
 export function modelList(params?: ModelQuery) {
-    return alovaInstance.get<PageResult<ModelVO>>(
-        '/model/model/list',
-        { params },
-    );
+  return alovaInstance.get<PageResult<ModelVO>>('/model/model/list', { params });
 }
 
 /**
@@ -22,7 +19,7 @@ export function modelList(params?: ModelQuery) {
  * @returns void
  */
 export function modelExport(params?: ModelQuery) {
-    return commonExport('/model/model/export', params ?? {});
+  return commonExport('/model/model/export', params ?? {});
 }
 
 /**
@@ -31,7 +28,7 @@ export function modelExport(params?: ModelQuery) {
  * @returns 模型详情
  */
 export function modelInfo(id: ID) {
-    return alovaInstance.get<ModelVO>(`/model/model/${id}`);
+  return alovaInstance.get<ModelVO>(`/model/model/${id}`);
 }
 
 /**
@@ -40,7 +37,7 @@ export function modelInfo(id: ID) {
  * @returns void
  */
 export function modelAdd(data: ModelForm) {
-    return alovaInstance.postWithMsg<void>('/model/model', data);
+  return alovaInstance.postWithMsg<void>('/model/model', data);
 }
 
 /**
@@ -49,7 +46,7 @@ export function modelAdd(data: ModelForm) {
  * @returns void
  */
 export function modelUpdate(data: ModelForm) {
-    return alovaInstance.putWithMsg<void>('/model/model', data);
+  return alovaInstance.putWithMsg<void>('/model/model', data);
 }
 
 /**
@@ -58,5 +55,18 @@ export function modelUpdate(data: ModelForm) {
  * @returns void
  */
 export function modelRemove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/model/model/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/model/model/\${id}`);
+}
+
+/**
+ * 更新模型状态
+ * @param data data
+ * @returns void
+ */
+export function modelStatusChange(data: Partial<ModelForm>) {
+  const requestData = {
+    id: data.id,
+    status: data.status,
+  };
+  return alovaInstance.putWithMsg<void>('/model/model/changeStatus', requestData);
 }

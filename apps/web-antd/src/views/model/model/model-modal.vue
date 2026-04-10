@@ -17,6 +17,13 @@ const title = computed(() => {
   return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
 });
 
+// 已添加的模型标签
+const modelTags = ref<string[]>([]);
+// 绑定输入框的值
+const modelInputValue = ref('');
+// formApi 用 ref 包装，避免在 modalSchema 调用时提前访问
+const formApiRef = ref<any>(null);
+
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     // 默认占满两列
@@ -29,10 +36,12 @@ const [BasicForm, formApi] = useVbenForm({
     },
   },
   // 对应 data.ts 中的 modalSchema
-  schema: modalSchema(),
+  schema: modalSchema(modelInputValue, modelTags, formApiRef),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
+// formApi 赋值给 ref，避免 modalSchema 调用时提前访问
+formApiRef.value = formApi;
 
 const [BasicModal, modalApi] = useVbenModal({
   fullscreenButton: false,
@@ -53,11 +62,27 @@ const [BasicModal, modalApi] = useVbenModal({
 
       // 注意：拦截器已处理 R 对象，直接传 record 即可
       await formApi.setValues(record);
+      // 初始化模型标签
+      modelTags.value = record.models ? record.models.split(',') : [];
+      // 清空输入框显示
+      modelInputValue.value = '';
+      // 设置 hidden 的 models 字段值
+      formApi.setFieldValue('models', record.models || '');
+    } else {
+      modelTags.value = [];
+      modelInputValue.value = '';
+      formApi.setFieldValue('models', '');
     }
 
     modalApi.modalLoading(false);
   },
 });
+
+// 移除模型标签
+function handleRemoveModel(index: number) {
+  modelTags.value.splice(index, 1);
+  formApi.setFieldValue('models', modelTags.value.join(','));
+}
 
 async function handleConfirm() {
   try {
@@ -90,7 +115,19 @@ async function handleCancel() {
 </script>
 
 <template>
-  <BasicModal :close-on-click-modal="false" :title="title" class="w-[550px]">
+  <BasicModal :title="title" class="w-[550px]">
     <BasicForm />
+    <!-- 可用模型输入区域 -->
+    <div class="mt-2 px-1">
+      <div v-if="modelTags.length > 0" class="mt-2 flex flex-wrap gap-2">
+        <span v-for="(tag, index) in modelTags" :key="index"
+          class="inline-flex items-center gap-1 rounded bg-blue-100 px-2 py-1 text-sm text-blue-700">
+          {{ tag }}
+          <button type="button" class="hover:text-blue-900" @click="handleRemoveModel(index)">
+            ×
+          </button>
+        </span>
+      </div>
+    </div>
   </BasicModal>
 </template>

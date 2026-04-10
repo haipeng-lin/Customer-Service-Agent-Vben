@@ -13,6 +13,13 @@ export const DictEnum = {
   WF_BUSINESS_STATUS: 'wf_business_status', // 业务状态
   WF_FORM_TYPE: 'wf_form_type', // 表单类型
   WF_TASK_STATUS: 'wf_task_status', // 任务状态
+  MD_MODEL_TYPE: 'md_model_type', // 模型类型
+  KB_EMBEDDING_STATUS: 'kb_embedding_status', // 向量状态
+  KB_QUESTION_STATUS: 'kb_question_status', // 问题状态
+  APP_ROLE_TYPE: 'app_role_type', // 角色类型
+  APP_FEEDBACK_TYPE: 'app_feedback_type', //评价类型
+  SYS_COMMON_YES_NO: 'sys_common_yes_no', // 通用是否
+  KB_APPLICATION_TYPE: 'kb_application_type', // 应用类型
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;

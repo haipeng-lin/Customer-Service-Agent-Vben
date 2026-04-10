@@ -1,5 +1,36 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { Ref } from 'vue';
+import { h } from 'vue';
+
+import { DictEnum } from '@vben/constants';
+import { getPopupContainer } from '@vben/utils';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
+/**
+ * 处理回车添加模型
+ */
+export function handleModelInputKeydown(
+  e: KeyboardEvent,
+  modelInputValue: Ref<string>,
+  modelTags: Ref<string[]>,
+  formApiRef: Ref<any>
+) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const target = e.target as HTMLInputElement;
+    const value = target.value?.trim() || '';
+    if (value && !modelTags.value.includes(value)) {
+      modelTags.value.push(value);
+      formApiRef.value?.setFieldValue('models', modelTags.value.join(','));
+      // 清空输入框
+      target.value = '';
+      modelInputValue.value = '';
+    }
+  }
+}
 
 /**
  * 搜索表单配置
@@ -12,13 +43,23 @@ export const querySchema = (): VbenFormSchema[] => [
   },
   {
     component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: getDictOptions(DictEnum.MD_MODEL_TYPE),
+      allowClear: true,
+    },
     fieldName: 'type',
     label: '模型类型',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: getDictOptions(DictEnum.SYS_NORMAL_DISABLE),
+      allowClear: true,
+    },
     fieldName: 'status',
-    label: '状态（0-启用 1-禁用）',
+    label: '状态',
   },
 ];
 
@@ -34,7 +75,12 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     field: 'type',
-    title: '模型类型（0-语言 1-向量 2-重排）',
+    title: '模型类型',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.type, DictEnum.MD_MODEL_TYPE);
+      },
+    },
   },
   {
     field: 'flag',
@@ -51,18 +97,33 @@ export const columns: VxeGridProps['columns'] = [
   {
     field: 'models',
     title: '可用模型',
+    slots: {
+      default: ({ row }) => {
+        if (!row.models) return '-';
+        const tags = row.models.split(',');
+        return tags.map((tag: string) =>
+          h(
+            'span',
+            {
+              class:
+                'inline-flex items-center rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-700 mr-1 mb-1',
+            },
+            tag
+          )
+        );
+      },
+    },
+    width: 200,
   },
-  {
-    field: 'icon',
-    title: '模型图标',
-  },
+  // {
+  //   field: 'icon',
+  //   title: '模型图标',
+  // },
   {
     field: 'status',
     title: '状态',
-  },
-  {
-    field: 'updateDept',
-    title: '修改部门',
+    slots: { default: 'status' },
+    minWidth: 40,
   },
   {
     field: 'action',
@@ -76,7 +137,11 @@ export const columns: VxeGridProps['columns'] = [
 /**
  * 弹窗表单配置 (新增/修改)
  */
-export const modalSchema = (): VbenFormSchema[] => [
+export const modalSchema = (
+  modelInputValue: Ref<string>,
+  modelTags: Ref<string[]>,
+  formApiRef: Ref<any>
+): VbenFormSchema[] => [
   {
     fieldName: 'id',
     label: 'Id',
@@ -90,16 +155,23 @@ export const modalSchema = (): VbenFormSchema[] => [
     fieldName: 'name',
     label: '模型名称',
     component: 'Input',
+    rules: 'required',
   },
   {
     fieldName: 'type',
+    componentProps: {
+      getPopupContainer,
+      options: getDictOptions(DictEnum.MD_MODEL_TYPE),
+    },
     label: '模型类型',
     component: 'Select',
+    rules: 'required',
   },
   {
     fieldName: 'flag',
     label: '模型标志',
     component: 'Input',
+    rules: 'required',
   },
   {
     fieldName: 'address',
@@ -112,18 +184,22 @@ export const modalSchema = (): VbenFormSchema[] => [
     component: 'Input',
   },
   {
-    fieldName: 'models',
+    fieldName: 'modelInputValue',
     label: '可用模型',
     component: 'Input',
+    componentProps: {
+      onKeydown: (e: KeyboardEvent) => {
+        handleModelInputKeydown(e, modelInputValue, modelTags, formApiRef);
+      },
+    },
   },
   {
-    fieldName: 'icon',
-    label: '模型图标',
+    fieldName: 'models',
+    label: 'models',
     component: 'Input',
-  },
-  {
-    fieldName: 'status',
-    label: '状态',
-    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
 ];
