@@ -10,10 +10,10 @@ import { alovaInstance } from '#/utils/http';
  * @returns 文档列表
  */
 export function documentList(params?: DocumentQuery) {
-    return alovaInstance.get<PageResult<DocumentVO>>(
-        '/knowledge/document/list',
-        { params },
-    );
+  return alovaInstance.get<PageResult<DocumentVO>>(
+    '/knowledge/document/list',
+    { params },
+  );
 }
 
 /**
@@ -22,7 +22,7 @@ export function documentList(params?: DocumentQuery) {
  * @returns void
  */
 export function documentExport(params?: DocumentQuery) {
-    return commonExport('/knowledge/document/export', params ?? {});
+  return commonExport('/knowledge/document/export', params ?? {});
 }
 
 /**
@@ -31,7 +31,7 @@ export function documentExport(params?: DocumentQuery) {
  * @returns 文档详情
  */
 export function documentInfo(id: ID) {
-    return alovaInstance.get<DocumentVO>(`/knowledge/document/${id}`);
+  return alovaInstance.get<DocumentVO>(`/knowledge/document/${id}`);
 }
 
 /**
@@ -40,7 +40,7 @@ export function documentInfo(id: ID) {
  * @returns void
  */
 export function documentAdd(data: DocumentForm) {
-    return alovaInstance.postWithMsg<void>('/knowledge/document', data);
+  return alovaInstance.postWithMsg<void>('/knowledge/document', data);
 }
 
 /**
@@ -49,7 +49,7 @@ export function documentAdd(data: DocumentForm) {
  * @returns void
  */
 export function documentUpdate(data: DocumentForm) {
-    return alovaInstance.putWithMsg<void>('/knowledge/document', data);
+  return alovaInstance.putWithMsg<void>('/knowledge/document', data);
 }
 
 /**
@@ -58,5 +58,5 @@ export function documentUpdate(data: DocumentForm) {
  * @returns void
  */
 export function documentRemove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/knowledge/document/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/knowledge/document/\${id}`);
 }

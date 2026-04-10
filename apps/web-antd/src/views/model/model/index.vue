@@ -89,7 +89,7 @@ function handleMultiDelete() {
   window.modal.confirm({
     title: '提示',
     okType: 'danger',
-    content: `确认删除选中的\${ids.length}条记录吗？`,
+    content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
       await modelRemove(ids);
       await tableApi.query();
