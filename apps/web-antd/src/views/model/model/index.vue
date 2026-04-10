@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import type { SwitchProps } from 'antdv-next';
-import type { VbenFormProps } from '@vben/common-ui';
-import type { Recordable } from '@vben/types';
-import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { SwitchProps } from "antdv-next";
+import type { VbenFormProps } from "@vben/common-ui";
+import type { Recordable } from "@vben/types";
+import type { VxeGridProps } from "#/adapter/vxe-table";
 
-import { ref } from 'vue';
+import { ref } from "vue";
 
-import { useAccess } from '@vben/access';
-import { Page, useVbenModal } from '@vben/common-ui';
-import { EnableStatus } from '@vben/constants';
-import { getPopupContainer } from '@vben/utils';
-import { Popconfirm, Space } from 'antdv-next';
+import { useAccess } from "@vben/access";
+import { Page, useVbenModal } from "@vben/common-ui";
+import { EnableStatus } from "@vben/constants";
+import { getPopupContainer } from "@vben/utils";
+import { Popconfirm, Space } from "antdv-next";
 
-import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { useVbenVxeGrid, vxeCheckboxChecked } from "#/adapter/vxe-table";
 
-import { modelList, modelRemove, modelStatusChange } from './api';
-import ApiSwitch from '#/components/global/api-switch.vue';
-import { columns, querySchema } from './data';
+import { modelList, modelRemove, modelStatusChange } from "./api";
+import ApiSwitch from "#/components/global/api-switch.vue";
+import { columns, querySchema } from "./data";
 
-import ModelModal from './model-modal.vue';
-import type { ModelForm } from './api/model';
+import ModelModal from "./model-modal.vue";
+import type { ModelForm } from "./api/model";
 
 const { hasAccessByCodes } = useAccess();
 
@@ -28,7 +28,7 @@ const formOptions: VbenFormProps = {
     labelWidth: 80,
   },
   schema: querySchema(),
-  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  wrapperClass: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
 };
 
 const gridOptions: VxeGridProps = {
@@ -37,7 +37,7 @@ const gridOptions: VxeGridProps = {
     reserve: true,
   },
   columns,
-  height: 'auto',
+  height: "auto",
   keepSource: true,
   pagerConfig: {},
   proxyConfig: {
@@ -53,7 +53,7 @@ const gridOptions: VxeGridProps = {
   },
   rowConfig: {
     isHover: true,
-    keyField: 'id',
+    keyField: "id",
   },
 };
 
@@ -87,8 +87,8 @@ function handleMultiDelete() {
   const ids = rows.map((row: any) => row.id);
   // 使用示例中的 window.modal.confirm
   window.modal.confirm({
-    title: '提示',
-    okType: 'danger',
+    title: "提示",
+    okType: "danger",
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
       await modelRemove(ids);
@@ -98,7 +98,10 @@ function handleMultiDelete() {
   });
 }
 
-async function handleChangeStatus(checked: SwitchProps['checked'], row: ModelForm) {
+async function handleChangeStatus(
+  checked: SwitchProps["checked"],
+  row: ModelForm
+) {
   await modelStatusChange({
     id: row.id,
     status: checked ? EnableStatus.Enable : EnableStatus.Disable,
@@ -113,30 +116,53 @@ async function handleChangeStatus(checked: SwitchProps['checked'], row: ModelFor
         <span class="pl-[7px] text-[16px]">模型列表</span>
       </template>
       <template #status="{ row }">
-        <ApiSwitch :value="row.status === EnableStatus.Enable" :api="(checked) => handleChangeStatus(checked, row)"
-          :disabled="!hasAccessByCodes(['model:model:edit'])
-            " @reload="() => tableApi.query()" />
+        <ApiSwitch
+          :value="row.status === EnableStatus.Enable"
+          :api="(checked) => handleChangeStatus(checked, row)"
+          :disabled="!hasAccessByCodes(['model:model:edit'])"
+          @reload="() => tableApi.query()"
+        />
       </template>
       <template #toolbar-tools>
         <Space>
-          <a-button :disabled="!vxeCheckboxChecked(tableApi)" danger type="primary"
-            v-access:code="['model:model:remove']" @click="handleMultiDelete">
-            {{ $t('pages.common.delete') }}
+          <a-button
+            :disabled="!vxeCheckboxChecked(tableApi)"
+            danger
+            type="primary"
+            v-access:code="['model:model:remove']"
+            @click="handleMultiDelete"
+          >
+            {{ $t("pages.common.delete") }}
           </a-button>
-          <a-button type="primary" v-access:code="['model:model:add']" @click="handleAdd">
-            {{ $t('pages.common.add') }}
+          <a-button
+            type="primary"
+            v-access:code="['model:model:add']"
+            @click="handleAdd"
+          >
+            {{ $t("pages.common.add") }}
           </a-button>
         </Space>
       </template>
       <template #action="{ row }">
         <Space>
-          <action-button v-access:code="['model:model:edit']" @click.stop="handleEdit(row)">
-            {{ $t('pages.common.edit') }}
+          <action-button
+            v-access:code="['model:model:edit']"
+            @click.stop="handleEdit(row)"
+          >
+            {{ $t("pages.common.edit") }}
           </action-button>
-          <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
-            @confirm="handleDelete(row)">
-            <action-button danger v-access:code="['model:model:remove']" @click.stop="">
-              {{ $t('pages.common.delete') }}
+          <Popconfirm
+            :get-popup-container="getPopupContainer"
+            placement="left"
+            title="确认删除？"
+            @confirm="handleDelete(row)"
+          >
+            <action-button
+              danger
+              v-access:code="['model:model:remove']"
+              @click.stop=""
+            >
+              {{ $t("pages.common.delete") }}
             </action-button>
           </Popconfirm>
         </Space>
