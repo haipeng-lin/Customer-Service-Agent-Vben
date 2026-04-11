@@ -39,23 +39,22 @@ export interface QuestionVO {
   /**
    * 创建时间
    */
-  createTime: ${ column.tsType };
+  createTime: string;
 
-/**
- * 修改部门
- */
-updateDept: number;
+  /**
+   * 修改部门
+   */
+  updateDept: number;
 
-/**
- * 修改人
- */
-updateBy: number;
+  /**
+   * 修改人
+   */
+  updateBy: number;
 
-/**
- * 修改时间
- */
-updateTime: ${ column.tsType };
-
+  /**
+   * 修改时间
+   */
+  updateTime: string;
 }
 
 export interface QuestionForm extends BaseEntity {
@@ -78,42 +77,6 @@ export interface QuestionForm extends BaseEntity {
    * 命中次数
    */
   hitNum?: number;
-
-  /**
-   * 租户Id
-   */
-  tenantId?: string;
-
-  /**
-   * 创建部门
-   */
-  createDept?: number;
-
-  /**
-   * 创建人
-   */
-  createBy?: number;
-
-  /**
-   * 创建时间
-   */
-  createTime?: ${ column.tsType };
-
-/**
- * 修改部门
- */
-updateDept ?: number;
-
-/**
- * 修改人
- */
-updateBy ?: number;
-
-/**
- * 修改时间
- */
-updateTime ?: ${ column.tsType };
-
 }
 
 export interface QuestionQuery extends PageQuery {

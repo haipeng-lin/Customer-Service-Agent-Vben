@@ -14,6 +14,15 @@ export function modelList(params?: ModelQuery) {
 }
 
 /**
+ * 查询全部模型
+ * @param params
+ * @returns 模型列表
+ */
+export function modelListAll(params?: ModelQuery) {
+  return alovaInstance.get<ModelVO[]>('/model/model/listAll', { params });
+}
+
+/**
  * 导出模型列表
  * @param params
  * @returns void

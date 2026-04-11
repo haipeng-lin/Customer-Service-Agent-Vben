@@ -6,14 +6,26 @@ import { getPopupContainer } from '@vben/utils';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
+import { datasetListAll } from './../dataset/api/index';
+
 /**
  * 搜索表单配置
  */
 export const querySchema = (): VbenFormSchema[] => [
   {
     fieldName: 'datasetId',
-    label: '知识库Id',
-    component: 'Input',
+    label: '知识库',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: datasetListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.title,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'type',
@@ -45,11 +57,6 @@ export const querySchema = (): VbenFormSchema[] => [
       options: getDictOptions(DictEnum.KB_QUESTION_STATUS),
       allowClear: true,
     },
-  },
-  {
-    fieldName: 'questionTime',
-    label: '生成问题时间',
-    component: 'DatePicker',
   },
   {
     fieldName: 'answerType',
@@ -105,11 +112,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     field: 'status',
     title: '状态',
-    slots: {
-      default: ({ row }) => {
-        return renderDict(row.status, DictEnum.SYS_NORMAL_DISABLE);
-      },
-    },
+    slots: { default: 'status' },
   },
   {
     field: 'action',
@@ -135,8 +138,18 @@ export const modalSchema = (): VbenFormSchema[] => [
   },
   {
     fieldName: 'datasetId',
-    label: '知识库Id',
-    component: 'Input',
+    label: '知识库',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: datasetListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.title,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'type',
@@ -152,44 +165,6 @@ export const modalSchema = (): VbenFormSchema[] => [
     fieldName: 'content',
     label: '文档内容',
     component: 'Input',
-  },
-  {
-    fieldName: 'fileSize',
-    label: '文件大小（MB）',
-    component: 'Input',
-  },
-  {
-    fieldName: 'segmentCount',
-    label: '分段数',
-    component: 'Input',
-  },
-  {
-    fieldName: 'embeddingStatus',
-    label: '向量状态',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.KB_EMBEDDING_STATUS),
-    },
-  },
-  {
-    fieldName: 'embeddingTime',
-    label: '向量时间',
-    component: 'DatePicker',
-  },
-  {
-    fieldName: 'questionStatus',
-    label: '问题状态',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.KB_QUESTION_STATUS),
-    },
-  },
-  {
-    fieldName: 'questionTime',
-    label: '生成问题时间',
-    component: 'DatePicker',
   },
   {
     fieldName: 'answerType',

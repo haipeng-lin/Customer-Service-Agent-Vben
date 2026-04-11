@@ -60,3 +60,31 @@ export function documentUpdate(data: DocumentForm) {
 export function documentRemove(id: ID | IDS) {
   return alovaInstance.deleteWithMsg<void>(`/knowledge/document/\${id}`);
 }
+
+/**
+ * 更新文档状态
+ * @param data data
+ * @returns void
+ */
+export function documentStatusChange(data: Partial<DocumentForm>) {
+  const requestData = {
+    id: data.id,
+    status: data.status,
+  };
+  return alovaInstance.putWithMsg<void>(
+    '/knowledge/document/changeStatus',
+    requestData,
+  );
+}
+
+/**
+ * 查询文档全部
+ * @param params
+ * @returns 文档全部列表
+ */
+export function documentListAll(params?: DocumentQuery) {
+  return alovaInstance.get<DocumentVO[]>(
+    '/knowledge/document/listAll',
+    { params },
+  );
+}

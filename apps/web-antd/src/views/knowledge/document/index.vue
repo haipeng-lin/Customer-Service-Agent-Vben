@@ -1,20 +1,27 @@
 <script setup lang="ts">
+    import type { SwitchProps } from 'antdv-next';
     import type { VbenFormProps } from '@vben/common-ui';
     import type { Recordable } from '@vben/types';
     import type { VxeGridProps } from '#/adapter/vxe-table';
 
     import { ref } from 'vue';
 
+    import { useAccess } from '@vben/access';
     import { Page, useVbenModal } from '@vben/common-ui';
+    import { EnableStatus } from '@vben/constants';
     import { getPopupContainer } from '@vben/utils';
     import { Popconfirm, Space } from 'antdv-next';
 
     import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 
-    import { documentList, documentRemove } from './api';
+    import { documentList, documentRemove, documentStatusChange } from './api';
+    import ApiSwitch from '#/components/global/api-switch.vue';
     import { columns, querySchema } from './data';
 
     import DocumentModal from './document-modal.vue';
+    import type { DocumentForm } from './api/model';
+
+    const { hasAccessByCodes } = useAccess();
 
     const formOptions: VbenFormProps = {
         commonConfig: {
@@ -78,7 +85,6 @@
     function handleMultiDelete() {
         const rows = tableApi.grid.getCheckboxRecords();
         const ids = rows.map((row: any) => row.id);
-        // 使用示例中的 window.modal.confirm
         window.modal.confirm({
             title: '提示',
             okType: 'danger',
@@ -90,6 +96,16 @@
             },
         });
     }
+
+    async function handleChangeStatus(
+        checked: SwitchProps['checked'],
+        row: DocumentForm,
+    ) {
+        await documentStatusChange({
+            id: row.id,
+            status: checked ? EnableStatus.Enable : EnableStatus.Disable,
+        });
+    }
 </script>
 
 <template>
@@ -97,6 +113,14 @@
         <BasicTable>
             <template #toolbar-actions>
                 <span class="pl-[7px] text-[16px]">文档列表</span>
+            </template>
+            <template #status="{ row }">
+                <ApiSwitch
+                    :value="row.status === EnableStatus.Enable"
+                    :api="(val) => handleChangeStatus(val, row)"
+                    :disabled="!hasAccessByCodes(['knowledge:document:edit'])"
+                    @reload="() => tableApi.query()"
+                />
             </template>
             <template #toolbar-tools>
                 <Space>

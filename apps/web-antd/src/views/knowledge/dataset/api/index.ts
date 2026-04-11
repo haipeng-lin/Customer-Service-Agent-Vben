@@ -60,3 +60,31 @@ export function datasetUpdate(data: DatasetForm) {
 export function datasetRemove(id: ID | IDS) {
     return alovaInstance.deleteWithMsg<void>(`/knowledge/dataset/\${id}`);
 }
+
+/**
+ * 更新知识库状态
+ * @param data data
+ * @returns void
+ */
+export function datasetStatusChange(data: Partial<DatasetForm>) {
+    const requestData = {
+        id: data.id,
+        status: data.status,
+    };
+    return alovaInstance.putWithMsg<void>(
+        '/knowledge/dataset/changeStatus',
+        requestData,
+    );
+}
+
+/**
+ * 查询知识库全部
+ * @param params
+ * @returns 知识库全部列表
+ */
+export function datasetListAll(params?: DatasetQuery) {
+    return alovaInstance.get<DatasetVO[]>(
+        '/knowledge/dataset/listAll',
+        { params },
+    );
+}

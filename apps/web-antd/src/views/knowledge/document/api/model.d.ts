@@ -44,68 +44,67 @@ export interface DocumentVO {
   /**
    * 向量时间
    */
-  embeddingTime: ${ column.tsType };
+  embeddingTime: string;
 
-/**
- * 生成问题状态（0-待生成 1-生成中 2-完成）
- */
-questionStatus: string;
+  /**
+   * 生成问题状态（0-待生成 1-生成中 2-完成）
+   */
+  questionStatus: string;
 
-/**
- * 生成问题时间
- */
-questionTime: ${ column.tsType };
+  /**
+   * 生成问题时间
+   */
+  questionTime: string;
 
-/**
- * 命中处理方式
- */
-answerType: string;
+  /**
+   * 命中处理方式
+   */
+  answerType: string;
 
-/**
- * 返回相似度
- */
-redirectSimilar: number;
+  /**
+   * 返回相似度
+   */
+  redirectSimilar: number;
 
-/**
- * 状态（0-启用 1-禁用）
- */
-status: string;
+  /**
+   * 状态（0-启用 1-禁用）
+   */
+  status: string;
 
-/**
- * 租户Id
- */
-tenantId: string;
+  /**
+   * 租户Id
+   */
+  tenantId: string;
 
-/**
- * 创建部门
- */
-createDept: number;
+  /**
+   * 创建部门
+   */
+  createDept: number;
 
-/**
- * 创建人
- */
-createBy: number;
+  /**
+   * 创建人
+   */
+  createBy: number;
 
-/**
- * 创建时间
- */
-createTime: ${ column.tsType };
+  /**
+   * 创建时间
+   */
+  createTime: string;
 
-/**
- * 修改部门
- */
-updateDept: number;
+  /**
+   * 修改部门
+   */
+  updateDept: number;
 
-/**
- * 修改人
- */
-updateBy: number;
+  /**
+   * 修改人
+   */
+  updateBy: number;
 
-/**
- * 修改时间
- */
-updateTime: ${ column.tsType };
-
+  /**
+   * 修改时间
+   */
+  updateTime: string;
 }
 
 export interface DocumentForm extends BaseEntity {
@@ -152,68 +151,32 @@ export interface DocumentForm extends BaseEntity {
   /**
    * 向量时间
    */
-  embeddingTime?: ${ column.tsType };
+  embeddingTime?: string;
 
-/**
- * 生成问题状态（0-待生成 1-生成中 2-完成）
- */
-questionStatus ?: string;
+  /**
+   * 生成问题状态（0-待生成 1-生成中 2-完成）
+   */
+  questionStatus?: string;
 
-/**
- * 生成问题时间
- */
-questionTime ?: ${ column.tsType };
+  /**
+   * 生成问题时间
+   */
+  questionTime?: string;
 
-/**
- * 命中处理方式
- */
-answerType ?: string;
+  /**
+   * 命中处理方式
+   */
+  answerType?: string;
 
-/**
- * 返回相似度
- */
-redirectSimilar ?: number;
+  /**
+   * 返回相似度
+   */
+  redirectSimilar?: number;
 
-/**
- * 状态（0-启用 1-禁用）
- */
-status ?: string;
-
-/**
- * 租户Id
- */
-tenantId ?: string;
-
-/**
- * 创建部门
- */
-createDept ?: number;
-
-/**
- * 创建人
- */
-createBy ?: number;
-
-/**
- * 创建时间
- */
-createTime ?: ${ column.tsType };
-
-/**
- * 修改部门
- */
-updateDept ?: number;
-
-/**
- * 修改人
- */
-updateBy ?: number;
-
-/**
- * 修改时间
- */
-updateTime ?: ${ column.tsType };
-
+  /**
+   * 状态（0-启用 1-禁用）
+   */
+  status?: string;
 }
 
 export interface DocumentQuery extends PageQuery {
@@ -255,35 +218,35 @@ export interface DocumentQuery extends PageQuery {
   /**
    * 向量时间
    */
-  embeddingTime?: ${ column.tsType };
+  embeddingTime?: string;
 
-/**
- * 生成问题状态（0-待生成 1-生成中 2-完成）
- */
-questionStatus ?: string;
+  /**
+   * 生成问题状态（0-待生成 1-生成中 2-完成）
+   */
+  questionStatus?: string;
 
-/**
- * 生成问题时间
- */
-questionTime ?: ${ column.tsType };
+  /**
+   * 生成问题时间
+   */
+  questionTime?: string;
 
-/**
- * 命中处理方式
- */
-answerType ?: string;
+  /**
+   * 命中处理方式
+   */
+  answerType?: string;
 
-/**
- * 返回相似度
- */
-redirectSimilar ?: number;
+  /**
+   * 返回相似度
+   */
+  redirectSimilar?: number;
 
-/**
- * 状态（0-启用 1-禁用）
- */
-status ?: string;
+  /**
+   * 状态（0-启用 1-禁用）
+   */
+  status?: string;
 
-/**
- * 日期范围参数
- */
-params ?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }

@@ -1,6 +1,6 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { h } from 'vue';
+
 import { DictEnum } from '@vben/constants';
 import { getPopupContainer } from '@vben/utils';
 import { getDictOptions } from '#/utils/dict';
@@ -40,11 +40,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     field: 'status',
     title: '状态',
-    slots: {
-      default: ({ row }) => {
-        return renderDict(row.status, DictEnum.SYS_NORMAL_DISABLE);
-      },
-    },
+    slots: { default: 'status' },
   },
   {
     field: 'action',
@@ -67,16 +63,6 @@ export const modalSchema = (): VbenFormSchema[] => [
       show: () => false,
       triggerFields: [''],
     },
-  },
-  {
-    fieldName: 'embeddingModelId',
-    label: '向量模型Id',
-    component: 'Input',
-  },
-  {
-    fieldName: 'embeddingModelName',
-    label: '向量模型名称',
-    component: 'Input',
   },
   {
     fieldName: 'title',

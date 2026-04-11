@@ -60,3 +60,31 @@ export function paragraphUpdate(data: ParagraphForm) {
 export function paragraphRemove(id: ID | IDS) {
     return alovaInstance.deleteWithMsg<void>(`/knowledge/paragraph/\${id}`);
 }
+
+/**
+ * 更新段落状态
+ * @param data data
+ * @returns void
+ */
+export function paragraphStatusChange(data: Partial<ParagraphForm>) {
+    const requestData = {
+        id: data.id,
+        status: data.status,
+    };
+    return alovaInstance.putWithMsg<void>(
+        '/knowledge/paragraph/changeStatus',
+        requestData,
+    );
+}
+
+/**
+ * 查询段落全部
+ * @param params
+ * @returns 段落全部列表
+ */
+export function paragraphListAll(params?: ParagraphQuery) {
+    return alovaInstance.get<ParagraphVO[]>(
+        '/knowledge/paragraph/listAll',
+        { params },
+    );
+}
