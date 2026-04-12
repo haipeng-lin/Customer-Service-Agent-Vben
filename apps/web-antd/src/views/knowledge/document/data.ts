@@ -6,7 +6,7 @@ import { getPopupContainer } from '@vben/utils';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
-import { datasetListAll } from './../dataset/api/index';
+import { datasetListAll } from '#/api/knowledge/dataset/index';
 
 /**
  * 搜索表单配置
@@ -26,11 +26,6 @@ export const querySchema = (): VbenFormSchema[] => [
         }));
       },
     },
-  },
-  {
-    fieldName: 'type',
-    label: '类型',
-    component: 'Input',
   },
   {
     fieldName: 'title',
@@ -59,11 +54,6 @@ export const querySchema = (): VbenFormSchema[] => [
     },
   },
   {
-    fieldName: 'answerType',
-    label: '命中处理方式',
-    component: 'Input',
-  },
-  {
     fieldName: 'status',
     label: '状态',
     component: 'Select',
@@ -82,9 +72,7 @@ export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
   { field: 'id', title: 'Id', width: 100 },
   { field: 'datasetId', title: '知识库Id' },
-  { field: 'type', title: '类型' },
   { field: 'title', title: '文档标题' },
-  { field: 'content', title: '文档内容' },
   { field: 'fileSize', title: '文件大小（MB）' },
   { field: 'segmentCount', title: '分段数' },
   {
@@ -107,8 +95,6 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   { field: 'questionTime', title: '生成问题时间' },
-  { field: 'answerType', title: '命中处理方式' },
-  { field: 'redirectSimilar', title: '返回相似度' },
   {
     field: 'status',
     title: '状态',
@@ -152,28 +138,8 @@ export const modalSchema = (): VbenFormSchema[] => [
     },
   },
   {
-    fieldName: 'type',
-    label: '类型',
-    component: 'Input',
-  },
-  {
     fieldName: 'title',
     label: '文档标题',
-    component: 'Input',
-  },
-  {
-    fieldName: 'content',
-    label: '文档内容',
-    component: 'Input',
-  },
-  {
-    fieldName: 'answerType',
-    label: '命中处理方式',
-    component: 'Input',
-  },
-  {
-    fieldName: 'redirectSimilar',
-    label: '返回相似度',
     component: 'Input',
   },
 ];

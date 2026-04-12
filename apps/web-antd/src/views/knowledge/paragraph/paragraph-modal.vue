@@ -7,8 +7,12 @@ import { cloneDeep } from "@vben/utils";
 
 import { useVbenForm } from "#/adapter/form";
 
-// 1. API 导入路径改为相对路径，并匹配新的命名风格
-import { paragraphAdd, paragraphInfo, paragraphUpdate } from "./api";
+// 1. API 导入路径改为绝对路径
+import {
+  paragraphAdd,
+  paragraphInfo,
+  paragraphUpdate,
+} from "#/api/knowledge/paragraph";
 import { modalSchema } from "./data";
 
 const emit = defineEmits<{ reload: [] }>();
@@ -92,7 +96,7 @@ async function handleCancel() {
 </script>
 
 <template>
-  <BasicModal :close-on-click-modal="false" :title="title" class="w-[550px]">
+  <BasicModal :title="title" class="w-[550px]">
     <BasicForm />
   </BasicModal>
 </template>

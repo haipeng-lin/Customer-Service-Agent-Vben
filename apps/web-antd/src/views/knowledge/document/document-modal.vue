@@ -7,8 +7,11 @@ import { cloneDeep } from "@vben/utils";
 
 import { useVbenForm } from "#/adapter/form";
 
-// 1. API 导入路径改为相对路径，并匹配新的命名风格
-import { documentAdd, documentInfo, documentUpdate } from "./api";
+import {
+  documentAdd,
+  documentInfo,
+  documentUpdate,
+} from "#/api/knowledge/document";
 import { modalSchema } from "./data";
 
 const emit = defineEmits<{ reload: [] }>();

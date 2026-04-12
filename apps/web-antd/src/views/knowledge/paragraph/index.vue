@@ -14,12 +14,12 @@
 
     import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 
-    import { paragraphList, paragraphRemove, paragraphStatusChange } from './api';
+    import { paragraphList, paragraphRemove, paragraphStatusChange } from '#/api/knowledge/paragraph/index';
     import ApiSwitch from '#/components/global/api-switch.vue';
     import { columns, querySchema } from './data';
 
     import ParagraphModal from './paragraph-modal.vue';
-    import type { ParagraphForm } from './api/model';
+    import type { ParagraphForm } from '#/api/knowledge/paragraph/model';
 
     const { hasAccessByCodes } = useAccess();
 

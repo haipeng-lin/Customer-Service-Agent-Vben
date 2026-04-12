@@ -4,7 +4,6 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { DictEnum } from '@vben/constants';
 import { getPopupContainer } from '@vben/utils';
 import { getDictOptions } from '#/utils/dict';
-import { renderDict } from '#/utils/render';
 
 /**
  * 搜索表单配置
@@ -32,11 +31,10 @@ export const querySchema = (): VbenFormSchema[] => [
  */
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
-  { field: 'id', title: 'Id', width: 100 },
-  { field: 'embeddingModelId', title: '向量模型Id' },
-  { field: 'embeddingModelName', title: '向量模型名称' },
+  { field: 'id', title: 'Id', width: 200 },
   { field: 'title', title: '标题' },
   { field: 'description', title: '描述' },
+  { field: 'embeddingModelName', title: '向量模型名称' },
   {
     field: 'status',
     title: '状态',
@@ -73,5 +71,13 @@ export const modalSchema = (): VbenFormSchema[] => [
     fieldName: 'description',
     label: '描述',
     component: 'Input',
+  },
+  {
+    fieldName: 'embeddingModelId',
+    label: '向量模型',
+    component: 'Select',
+    componentProps: {
+      placeholder: '请选择向量模型',
+    },
   },
 ];

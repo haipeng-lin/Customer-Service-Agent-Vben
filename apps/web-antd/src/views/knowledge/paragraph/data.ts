@@ -6,19 +6,42 @@ import { getPopupContainer } from '@vben/utils';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
+import { datasetListAll } from '#/api/knowledge/dataset';
+import { documentListAll } from '#/api/knowledge/document';
+
 /**
  * 搜索表单配置
  */
 export const querySchema = (): VbenFormSchema[] => [
   {
     fieldName: 'datasetId',
-    label: '知识库Id',
-    component: 'Input',
+    label: '知识库',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: datasetListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.title,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'documentId',
-    label: '文档Id',
-    component: 'Input',
+    label: '文档',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: documentListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.title,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'title',
@@ -80,8 +103,18 @@ export const modalSchema = (): VbenFormSchema[] => [
   },
   {
     fieldName: 'datasetId',
-    label: '知识库Id',
-    component: 'Input',
+    label: '知识库',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: datasetListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.title,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'documentId',
