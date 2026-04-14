@@ -1,0 +1,100 @@
+<script setup lang="ts">
+import { computed, ref } from "vue";
+
+import { useVbenModal } from "@vben/common-ui";
+import { $t } from "@vben/locales";
+import { cloneDeep } from "@vben/utils";
+
+import { useVbenForm } from "#/adapter/form";
+
+import {
+  chatSessionAdd,
+  chatSessionInfo,
+  chatSessionUpdate,
+} from "#/api/application/chatSession";
+import { modalSchema } from "./data";
+
+const emit = defineEmits<{ reload: [] }>();
+
+const isUpdate = ref(false);
+const title = computed(() => {
+  return isUpdate.value ? $t("pages.common.edit") : $t("pages.common.add");
+});
+
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    // 默认占满两列
+    formItemClass: "col-span-2",
+    // 默认label宽度 px
+    labelWidth: 80,
+    // 通用配置项 会影响到所有表单项
+    componentProps: {
+      class: "w-full",
+    },
+  },
+  // 对应 data.ts 中的 modalSchema
+  schema: modalSchema(),
+  showDefaultActions: false,
+  wrapperClass: "grid-cols-2",
+});
+
+const [BasicModal, modalApi] = useVbenModal({
+  fullscreenButton: false,
+  onCancel: handleCancel,
+  onConfirm: handleConfirm,
+  onOpenChange: async (isOpen) => {
+    if (!isOpen) {
+      return null;
+    }
+    modalApi.modalLoading(true);
+
+    // 获取从主页面传递过来的 id
+    const { id } = modalApi.getData() as { id?: number | string };
+    isUpdate.value = !!id;
+
+    if (isUpdate.value && id) {
+      const record = await chatSessionInfo(id);
+
+      // 注意：拦截器已处理 R 对象，直接传 record 即可
+      await formApi.setValues(record);
+    }
+
+    modalApi.modalLoading(false);
+  },
+});
+
+async function handleConfirm() {
+  try {
+    modalApi.modalLoading(true);
+    const { valid } = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+
+    // getValues 获取为一个 readonly 的对象，需要修改必须先深拷贝一次
+    const data = cloneDeep(await formApi.getValues());
+
+    // 根据 isUpdate 状态决定调用新增还是修改接口
+    await (isUpdate.value ? chatSessionUpdate(data) : chatSessionAdd(data));
+
+    // 通知主页面刷新列表
+    emit("reload");
+    await handleCancel();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    modalApi.modalLoading(false);
+  }
+}
+
+async function handleCancel() {
+  modalApi.close();
+  await formApi.resetForm();
+}
+</script>
+
+<template>
+  <BasicModal :title="title" class="w-[550px]">
+    <BasicForm />
+  </BasicModal>
+</template>

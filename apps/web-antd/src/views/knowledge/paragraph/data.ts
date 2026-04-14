@@ -118,8 +118,18 @@ export const modalSchema = (): VbenFormSchema[] => [
   },
   {
     fieldName: 'documentId',
-    label: '文档Id',
-    component: 'Input',
+    label: '文档',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: documentListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.title,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'title',

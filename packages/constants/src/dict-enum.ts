@@ -20,6 +20,11 @@ export const DictEnum = {
   APP_FEEDBACK_TYPE: 'app_feedback_type', //评价类型
   SYS_COMMON_YES_NO: 'sys_common_yes_no', // 通用是否
   KB_APPLICATION_TYPE: 'kb_application_type', // 应用类型
+  APP_SEARCH_TYPE: 'app_search_type', // 检索类型
+  APP_SESSION_SOURCE_TYPE: 'app_session_source_type', // 会话来源类型
+  APP_SESSION_STATUS: 'app_session_status', // 会话状态
+
+
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;
