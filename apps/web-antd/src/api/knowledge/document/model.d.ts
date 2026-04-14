@@ -27,7 +27,7 @@ export interface DocumentVO {
   content: string;
 
   /**
-   * 文件大小（MB）
+   * 文件大小
    */
   fileSize: number;
 
@@ -134,7 +134,7 @@ export interface DocumentForm extends BaseEntity {
   content?: string;
 
   /**
-   * 文件大小（MB）
+   * 文件大小
    */
   fileSize?: number;
 
@@ -201,7 +201,7 @@ export interface DocumentQuery extends PageQuery {
   content?: string;
 
   /**
-   * 文件大小（MB）
+   * 文件大小
    */
   fileSize?: number;
 

@@ -50,7 +50,7 @@ export const querySchema = (): VbenFormSchema[] => [
  */
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
-  { field: 'id', title: 'Id', width: 100 },
+  { field: 'id', title: 'Id', width: 180 },
   { field: 'datasetId', title: '知识库Id' },
   { field: 'documentId', title: '文档Id' },
   { field: 'paragraphId', title: '段落Id' },
