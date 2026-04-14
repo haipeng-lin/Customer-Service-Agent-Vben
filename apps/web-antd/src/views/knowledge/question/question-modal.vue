@@ -49,9 +49,20 @@ const [BasicModal, modalApi] = useVbenModal({
     }
     modalApi.modalLoading(true);
 
-    // 获取从主页面传递过来的 id
-    const { id } = modalApi.getData() as { id?: number | string };
+    // 获取从主页面传递过来的 id 和 datasetId
+    const { id, datasetId } = modalApi.getData() as { id?: number | string; datasetId?: number };
     isUpdate.value = !!id;
+    // 如果有 datasetId（从详情页传入），则禁用该字段
+    if (datasetId) {
+      await formApi.updateSchema([
+        {
+          fieldName: "datasetId",
+          componentProps: {
+            disabled: true,
+          },
+        },
+      ]);
+    }
 
     if (isUpdate.value && id) {
       // 2. 使用新的获取详情函数名 questionInfo
@@ -59,6 +70,9 @@ const [BasicModal, modalApi] = useVbenModal({
 
       // 注意：拦截器已处理 R 对象，直接传 record 即可
       await formApi.setValues(record);
+    } else if (datasetId) {
+      // 新增时设置 datasetId
+      await formApi.setFieldValue("datasetId", datasetId);
     }
 
     modalApi.modalLoading(false);
