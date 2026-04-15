@@ -26,16 +26,6 @@ export const querySchema = (): VbenFormSchema[] => [
     component: 'Input',
   },
   {
-    fieldName: 'isRelateDataset',
-    label: '是否关联知识库',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.SYS_COMMON_YES_NO),
-      allowClear: true,
-    },
-  },
-  {
     fieldName: 'searchMode',
     label: '检索模式',
     component: 'Select',
@@ -49,46 +39,6 @@ export const querySchema = (): VbenFormSchema[] => [
     fieldName: 'rerankModelId',
     label: '重排索引模型',
     component: 'Input',
-  },
-  {
-    fieldName: 'isShowRelation',
-    label: '是否显示引用',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.SYS_COMMON_YES_NO),
-      allowClear: true,
-    },
-  },
-  {
-    fieldName: 'isShowTime',
-    label: '是否显示时间',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.SYS_COMMON_YES_NO),
-      allowClear: true,
-    },
-  },
-  {
-    fieldName: 'isShowToken',
-    label: '是否显示token',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.SYS_COMMON_YES_NO),
-      allowClear: true,
-    },
-  },
-  {
-    fieldName: 'isShowAppraise',
-    label: '是否显示评价',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.SYS_COMMON_YES_NO),
-      allowClear: true,
-    },
   },
   {
     fieldName: 'status',
@@ -107,10 +57,10 @@ export const querySchema = (): VbenFormSchema[] => [
  */
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
-  { field: 'id', title: 'Id', width: 100 },
+  { field: 'id', title: 'Id', width: 200 },
   { field: 'name', title: '应用名称' },
   { field: 'description', title: '应用描述' },
-  { field: 'icon', title: '应用头像' },
+  // { field: 'icon', title: '应用头像' },
   { field: 'modelId', title: '模型Id' },
   { field: 'modelName', title: '模型名称' },
   { field: 'prompt', title: '提示词' },
@@ -332,15 +282,6 @@ export const modalSchema = (): VbenFormSchema[] => [
     componentProps: {
       getPopupContainer,
       options: getDictOptions(DictEnum.SYS_COMMON_YES_NO),
-    },
-  },
-  {
-    fieldName: 'status',
-    label: '状态',
-    component: 'Select',
-    componentProps: {
-      getPopupContainer,
-      options: getDictOptions(DictEnum.KB_APPLICATION_TYPE),
     },
   },
 ];
