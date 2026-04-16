@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from "vue";
 
-import { VbenIcon } from '@vben/icons';
-import { useVbenForm } from '#/adapter/form';
-import { previewDocument } from '#/api/agent/agent';
+import { Modal } from "antdv-next";
+import { Form, FormItem, Input, message } from "antdv-next";
+import { VbenIcon } from "@vben/icons";
+import { useVbenForm } from "#/adapter/form";
+import { previewDocument } from "#/api/agent/agent";
 
 const props = defineProps<{
   initialData: {
@@ -23,7 +25,7 @@ const emit = defineEmits<{
 
 const diyForm = reactive({
   splitType: props.initialData.diyForm?.splitType || 1,
-  pattern: props.initialData.diyForm?.pattern || '',
+  pattern: props.initialData.diyForm?.pattern || "",
   splitLen: props.initialData.diyForm?.splitLen || 512,
   autoClean: props.initialData.diyForm?.autoClean || 1,
 });
@@ -35,63 +37,87 @@ const nowSegmentData = ref<any[]>([]);
 const documentList = ref<any[]>(props.initialData.documentList || []);
 const editorVisible = ref(false);
 const nowSegementIndex = ref(0);
-const editForm = reactive({ title: '', content: '' });
+const editForm = reactive({ title: "", content: "" });
 const loading = ref(false);
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
     labelWidth: 120,
     componentProps: {
-      class: 'w-full',
+      class: "w-full",
     },
   },
-  schema: computed(() => [
+  schema: [
     {
-      fieldName: 'splitType',
-      label: '分段规则',
-      component: 'RadioGroup',
+      fieldName: "splitType",
+      label: "分段规则",
+      component: "RadioGroup",
+      defaultValue: 1,
       componentProps: {
         options: [
-          { label: '默认分段', value: 1 },
-          { label: '自定义分段', value: 2 },
+          { label: "默认分段", value: 1 },
+          { label: "自定义分段", value: 2 },
         ],
+        onChange: (e: any) => {
+          diyForm.splitType = e.target.value;
+        },
       },
     },
-    ...(diyForm.splitType === 2
-      ? [
-          {
-            fieldName: 'pattern',
-            label: '自定义分隔符',
-            component: 'Input',
-            componentProps: {
-              placeholder: '例如: ==SPLIT==',
-            },
-          },
-          {
-            fieldName: 'splitLen',
-            label: '分段长度',
-            component: 'InputNumber',
-            componentProps: {
-              min: 100,
-              max: 8000,
-            },
-          },
-          {
-            fieldName: 'autoClean',
-            label: '自动清洗',
-            component: 'RadioGroup',
-            componentProps: {
-              options: [
-                { label: '是', value: 1 },
-                { label: '否', value: 2 },
-              ],
-            },
-          },
-        ]
-      : []),
-  ]),
+    {
+      fieldName: "pattern",
+      label: "自定义分隔符",
+      component: "Input",
+      defaultValue: "",
+      componentProps: {
+        placeholder: "例如: ==SPLIT==",
+        onChange: (e: any) => {
+          diyForm.pattern = e.target.value;
+        },
+      },
+      dependencies: {
+        show: () => diyForm.splitType === 2,
+        triggerFields: ["splitType"],
+      },
+    },
+    {
+      fieldName: "splitLen",
+      label: "分段长度",
+      component: "InputNumber",
+      defaultValue: 512,
+      componentProps: {
+        min: 100,
+        max: 8000,
+        onChange: (val: any) => {
+          diyForm.splitLen = typeof val === "number" ? val : Number(val);
+        },
+      },
+      dependencies: {
+        show: () => diyForm.splitType === 2,
+        triggerFields: ["splitType"],
+      },
+    },
+    {
+      fieldName: "autoClean",
+      label: "自动清洗",
+      component: "RadioGroup",
+      defaultValue: 1,
+      componentProps: {
+        options: [
+          { label: "是", value: 1 },
+          { label: "否", value: 2 },
+        ],
+        onChange: (e: any) => {
+          diyForm.autoClean = e.target.value;
+        },
+      },
+      dependencies: {
+        show: () => diyForm.splitType === 2,
+        triggerFields: ["splitType"],
+      },
+    },
+  ],
   showDefaultActions: false,
-  wrapperClass: 'grid-cols-1',
+  wrapperClass: "grid-cols-1",
 });
 
 async function handlePreview() {
@@ -99,16 +125,60 @@ async function handlePreview() {
   try {
     const formData = new FormData();
     props.initialData.fileList.forEach((file: any) => {
-      formData.append('files', file.raw);
+      const fileToUpload = file.originFileObj || file.raw || file;
+      console.log("上传文件:", fileToUpload);
+      formData.append("files", fileToUpload);
     });
-    formData.append('pattern', diyForm.pattern);
-    formData.append('splitLen', diyForm.splitLen);
-    formData.append('splitType', diyForm.splitType);
-    formData.append('autoClean', diyForm.autoClean);
-    formData.append('fileType', props.initialData.fileType);
+    formData.append("pattern", diyForm.pattern);
+    formData.append("splitLen", diyForm.splitLen);
+    formData.append("splitType", diyForm.splitType);
+    formData.append("autoClean", diyForm.autoClean);
+    formData.append("fileType", props.initialData.fileType);
+
+    console.log("diyForm参数:", {
+      pattern: diyForm.pattern,
+      splitLen: diyForm.splitLen,
+      splitType: diyForm.splitType,
+      autoClean: diyForm.autoClean,
+      fileType: props.initialData.fileType,
+      fileList: props.initialData.fileList,
+    });
 
     const res = await previewDocument(formData);
-    documentList.value = res.data || [];
+    console.log("预览接口原始返回:", res);
+    console.log("res instanceof Blob:", res instanceof Blob);
+
+    // 解析返回的数据
+    let parsedData: any[] = [];
+    try {
+      if (res instanceof Blob) {
+        // 如果是Blob，先转换为文本再解析JSON
+        const text = await res.text();
+        console.log("Blob文本内容:", text);
+        const jsonObj = JSON.parse(text);
+        console.log("解析后的JSON:", jsonObj);
+        parsedData = jsonObj?.data || jsonObj || [];
+      } else if (res?.data?.data) {
+        // 双重data结构: { data: { code, msg, data: [...] } }
+        parsedData = res.data.data || [];
+      } else if (res?.data) {
+        // 单层data结构: { data: [...] }
+        parsedData = Array.isArray(res.data) ? res.data : res.data.data || [];
+      } else if (Array.isArray(res)) {
+        // 直接是数组
+        parsedData = res;
+      } else {
+        console.error("预览返回数据格式异常:", res);
+        message.error("预览返回数据格式异常");
+      }
+    } catch (e) {
+      console.error("解析预览数据失败:", e);
+      message.error("解析预览数据失败");
+    }
+
+    console.log("解析后的parsedData:", parsedData);
+
+    documentList.value = parsedData;
 
     nowFileIndex.value = 0;
     segmentTitle.value = [];
@@ -116,16 +186,58 @@ async function handlePreview() {
 
     documentList.value.forEach((doc: any) => {
       segmentTitle.value.push(doc.name);
-      segmentData.value.push(doc.content);
+      // 支持多种数据格式
+      const content = doc.content || doc.segments || doc;
+      segmentData.value.push(Array.isArray(content) ? content : [content]);
     });
 
+    console.log("segmentTitle:", segmentTitle.value);
+    console.log("segmentData:", segmentData.value);
+    console.log("nowSegmentData:", nowSegmentData.value);
+
     nowSegmentData.value = segmentData.value[0] || [];
+
+    if (documentList.value.length > 0) {
+      message.success(`预览成功，共 ${documentList.value.length} 个文档`);
+    }
   } catch (err) {
     console.error(err);
+    message.error("预览失败");
   } finally {
     loading.value = false;
   }
 }
+
+// 初始化表单默认值
+onMounted(async () => {
+  await formApi.setValues({
+    splitType: diyForm.splitType,
+    pattern: diyForm.pattern,
+    splitLen: diyForm.splitLen,
+    autoClean: diyForm.autoClean,
+  });
+});
+
+// 监听 documentList 变化，初始化分段预览数据
+watch(
+  () => props.initialData.documentList,
+  (newVal) => {
+    console.log('123')
+    if (newVal && newVal.length > 0) {
+      console.log("documentList更新:", newVal);
+      documentList.value = newVal;
+      segmentTitle.value = [];
+      segmentData.value = [];
+      newVal.forEach((doc: any) => {
+        segmentTitle.value.push(doc.name);
+        const content = doc.content || doc.segments || doc;
+        segmentData.value.push(Array.isArray(content) ? content : [content]);
+      });
+      nowSegmentData.value = segmentData.value[0] || [];
+    }
+  },
+  { immediate: true }
+);
 
 function handleFileSwitch(index: number) {
   nowFileIndex.value = index;
@@ -134,14 +246,16 @@ function handleFileSwitch(index: number) {
 
 function editSegment(index: number) {
   const target = segmentData.value[nowFileIndex.value][index];
-  editForm.title = target.title || '';
-  editForm.content = target.content || '';
+  editForm.title = target?.title || "";
+  editForm.content = target?.content || "";
   nowSegementIndex.value = index;
   editorVisible.value = true;
 }
 
 function confirmEdit() {
-  segmentData.value[nowFileIndex.value][nowSegementIndex.value] = { ...editForm };
+  segmentData.value[nowFileIndex.value][nowSegementIndex.value] = {
+    ...editForm,
+  };
   editorVisible.value = false;
 }
 
@@ -151,7 +265,7 @@ function delSegment(index: number) {
 }
 
 function handleNext() {
-  emit('next', { documentList: documentList.value });
+  emit("next", { documentList: documentList.value });
 }
 </script>
 
@@ -166,10 +280,10 @@ function handleNext() {
 
         <BasicForm />
 
-        <div class="mt-4 flex justify-end">
-          <el-button type="primary" :loading="loading" @click="handlePreview">
+        <div class="mt-4 flex justify-center">
+          <a-button type="primary" :loading="loading" @click="handlePreview">
             重新预览
-          </el-button>
+          </a-button>
         </div>
       </div>
 
@@ -211,21 +325,32 @@ function handleNext() {
             <div class="mb-2 flex items-center justify-between">
               <span class="font-medium text-blue-500">#{{ index + 1 }}</span>
               <div class="flex gap-2">
-                <VbenIcon icon="icon-[lucide--pencil]" class="cursor-pointer text-gray-400 hover:text-blue-500" @click="editSegment(index)" />
-                <VbenIcon icon="icon-[lucide--trash2]" class="cursor-pointer text-gray-400 hover:text-red-500" @click="delSegment(index)" />
+                <VbenIcon
+                  icon="icon-[lucide--pencil]"
+                  class="cursor-pointer text-gray-400 hover:text-blue-500"
+                  @click="editSegment(index)"
+                />
+                <VbenIcon
+                  icon="icon-[lucide--trash2]"
+                  class="cursor-pointer text-gray-400 hover:text-red-500"
+                  @click="delSegment(index)"
+                />
               </div>
             </div>
             <div class="mb-2">
               <span class="text-sm font-medium text-gray-600">分段标题：</span>
-              <span class="text-sm">{{ item.title || '-' }}</span>
+              <span class="text-sm">{{ item?.title || "-" }}</span>
             </div>
-            <div class="text-sm text-gray-700">{{ item.content }}</div>
+            <div class="text-sm text-gray-700">{{ item?.content }}</div>
             <div class="mt-2 text-xs text-gray-400">
-              {{ item.content?.length || 0 }} 字符
+              {{ item?.content?.length || 0 }} 字符
             </div>
           </div>
 
-          <div v-if="nowSegmentData.length === 0" class="py-8 text-center text-gray-400">
+          <div
+            v-if="nowSegmentData.length === 0"
+            class="py-8 text-center text-gray-400"
+          >
             暂无预览数据
           </div>
         </div>
@@ -233,32 +358,42 @@ function handleNext() {
     </div>
 
     <div class="mt-6 flex justify-end gap-3">
-      <el-button @click="emit('prev')">上一步</el-button>
-      <el-button type="primary" :loading="loading" @click="handleNext">
+      <a-button @click="emit('prev')">上一步</a-button>
+      <a-button type="primary" :loading="loading" @click="handleNext">
         提交上传
-      </el-button>
+      </a-button>
     </div>
 
     <!-- 编辑弹窗 -->
-    <el-dialog v-model="editorVisible" title="修改段落" width="800px">
-      <el-form :model="editForm" label-width="80">
-        <el-form-item label="段落标题">
-          <el-input v-model="editForm.title" placeholder="标题" maxlength="255" show-word-limit />
-        </el-form-item>
-        <el-form-item label="段落内容">
-          <el-input
-            v-model="editForm.content"
+    <Modal
+      :open="editorVisible"
+      title="修改段落"
+      width="800px"
+      @cancel="editorVisible = false"
+    >
+      <Form :model="editForm" layout="vertical">
+        <FormItem label="段落标题">
+          <Input
+            v-model:value="editForm.title"
+            placeholder="标题"
+            :maxlength="255"
+            show-count
+          />
+        </FormItem>
+        <FormItem label="段落内容">
+          <Input
+            v-model:value="editForm.content"
             type="textarea"
             :rows="12"
-            maxlength="8000"
-            show-word-limit
+            :maxlength="8000"
+            show-count
           />
-        </el-form-item>
-      </el-form>
+        </FormItem>
+      </Form>
       <template #footer>
-        <el-button @click="editorVisible = false">取消</el-button>
-        <el-button type="primary" @click="confirmEdit">确认修改</el-button>
+        <a-button @click="editorVisible = false">取消</a-button>
+        <a-button type="primary" @click="confirmEdit">确认修改</a-button>
       </template>
-    </el-dialog>
+    </Modal>
   </div>
 </template>
