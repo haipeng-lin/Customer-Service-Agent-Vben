@@ -78,6 +78,11 @@ async function handleChangeStatus(
 function handleCardClick(item: DatasetVO) {
   router.push(`/datasetDetail/${item.id}`);
 }
+
+// 跳转到文档上传页
+function handleUpload(item: DatasetVO) {
+  router.push(`/knowledge/document-upload?datasetId=${item.id}`);
+}
 </script>
 
 <template>
@@ -119,6 +124,8 @@ function handleCardClick(item: DatasetVO) {
 
           <!-- 底部：操作按钮 -->
           <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-2 mt-auto">
+            <VbenIcon icon="icon-[lucide--upload]" class="cursor-pointer text-gray-400 hover:text-blue-500"
+              v-access:code="['knowledge:document:add']" @click.stop="handleUpload(item)" />
             <VbenIcon icon="icon-[lucide--pencil]" class="cursor-pointer text-gray-400 hover:text-blue-500"
               v-access:code="['knowledge:dataset:edit']" @click.stop="handleEdit(item)" />
             <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
