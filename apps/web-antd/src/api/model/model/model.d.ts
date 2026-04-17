@@ -107,21 +107,6 @@ export interface ModelForm extends BaseEntity {
    * 状态（0-启用 1-禁用）
    */
   status?: string;
-
-  /**
-   * 租户Id
-   */
-  tenantId?: string;
-
-  /**
-   * 创建部门
-   */
-  createDept?: number;
-
-  /**
-   * 创建人
-   */
-  createBy?: number;
 }
 
 export interface ModelQuery extends PageQuery {
@@ -164,11 +149,6 @@ export interface ModelQuery extends PageQuery {
    * 状态（0-启用 1-禁用）
    */
   status?: string;
-
-  /**
-   * 修改部门
-   */
-  updateDept?: number;
 
   /**
    * 日期范围参数

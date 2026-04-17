@@ -10,10 +10,7 @@ import { alovaInstance } from '#/utils/http';
  * @returns 对话会话列表
  */
 export function chatSessionList(params?: ChatSessionQuery) {
-    return alovaInstance.get<PageResult<ChatSessionVO>>(
-        '/application/chatSession/list',
-        { params },
-    );
+  return alovaInstance.get<PageResult<ChatSessionVO>>('/application/chatSession/list', { params });
 }
 
 /**
@@ -22,7 +19,7 @@ export function chatSessionList(params?: ChatSessionQuery) {
  * @returns void
  */
 export function chatSessionExport(params?: ChatSessionQuery) {
-    return commonExport('/application/chatSession/export', params ?? {});
+  return commonExport('/application/chatSession/export', params ?? {});
 }
 
 /**
@@ -31,7 +28,7 @@ export function chatSessionExport(params?: ChatSessionQuery) {
  * @returns 对话会话详情
  */
 export function chatSessionInfo(id: ID) {
-    return alovaInstance.get<ChatSessionVO>(`/application/chatSession/${id}`);
+  return alovaInstance.get<ChatSessionVO>(`/application/chatSession/${id}`);
 }
 
 /**
@@ -40,7 +37,7 @@ export function chatSessionInfo(id: ID) {
  * @returns void
  */
 export function chatSessionAdd(data: ChatSessionForm) {
-    return alovaInstance.postWithMsg<void>('/application/chatSession', data);
+  return alovaInstance.postWithMsg<void>('/application/chatSession', data);
 }
 
 /**
@@ -49,7 +46,7 @@ export function chatSessionAdd(data: ChatSessionForm) {
  * @returns void
  */
 export function chatSessionUpdate(data: ChatSessionForm) {
-    return alovaInstance.putWithMsg<void>('/application/chatSession', data);
+  return alovaInstance.putWithMsg<void>('/application/chatSession', data);
 }
 
 /**
@@ -58,5 +55,5 @@ export function chatSessionUpdate(data: ChatSessionForm) {
  * @returns void
  */
 export function chatSessionRemove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/application/chatSession/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/application/chatSession/${id}`);
 }

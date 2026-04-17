@@ -10,10 +10,7 @@ import { alovaInstance } from '#/utils/http';
  * @returns 应用列表
  */
 export function applicationList(params?: ApplicationQuery) {
-  return alovaInstance.get<PageResult<ApplicationVO>>(
-    '/application/application/list',
-    { params },
-  );
+  return alovaInstance.get<PageResult<ApplicationVO>>('/application/application/list', { params });
 }
 
 /**
@@ -58,5 +55,5 @@ export function applicationUpdate(data: ApplicationForm) {
  * @returns void
  */
 export function applicationRemove(id: ID | IDS) {
-  return alovaInstance.deleteWithMsg<void>(`/application/application/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/application/application/${id}`);
 }

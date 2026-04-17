@@ -10,10 +10,7 @@ import { alovaInstance } from '#/utils/http';
  * @returns 对话消息列表
  */
 export function chatMessageList(params?: ChatMessageQuery) {
-  return alovaInstance.get<PageResult<ChatMessageVO>>(
-    '/application/chatMessage/list',
-    { params },
-  );
+  return alovaInstance.get<PageResult<ChatMessageVO>>('/application/chatMessage/list', { params });
 }
 
 /**
@@ -58,5 +55,5 @@ export function chatMessageUpdate(data: ChatMessageForm) {
  * @returns void
  */
 export function chatMessageRemove(id: ID | IDS) {
-  return alovaInstance.deleteWithMsg<void>(`/application/chatMessage/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/application/chatMessage/${id}`);
 }

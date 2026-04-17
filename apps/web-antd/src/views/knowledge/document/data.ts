@@ -71,7 +71,7 @@ export const querySchema = (): VbenFormSchema[] => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
   { field: 'id', title: 'Id', width: 200 },
-  { field: 'datasetId', title: '知识库Id' },
+  { field: 'datasetTitle', title: '知识库' },
   { field: 'title', title: '文档标题' },
   { field: 'fileSize', title: '文件大小' },
   { field: 'segmentCount', title: '分段数' },

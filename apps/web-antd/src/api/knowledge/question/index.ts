@@ -10,10 +10,7 @@ import { alovaInstance } from '#/utils/http';
  * @returns 问题列表
  */
 export function questionList(params?: QuestionQuery) {
-    return alovaInstance.get<PageResult<QuestionVO>>(
-        '/knowledge/question/list',
-        { params },
-    );
+  return alovaInstance.get<PageResult<QuestionVO>>('/knowledge/question/list', { params });
 }
 
 /**
@@ -22,7 +19,7 @@ export function questionList(params?: QuestionQuery) {
  * @returns void
  */
 export function questionExport(params?: QuestionQuery) {
-    return commonExport('/knowledge/question/export', params ?? {});
+  return commonExport('/knowledge/question/export', params ?? {});
 }
 
 /**
@@ -31,7 +28,7 @@ export function questionExport(params?: QuestionQuery) {
  * @returns 问题详情
  */
 export function questionInfo(id: ID) {
-    return alovaInstance.get<QuestionVO>(`/knowledge/question/${id}`);
+  return alovaInstance.get<QuestionVO>(`/knowledge/question/${id}`);
 }
 
 /**
@@ -40,7 +37,7 @@ export function questionInfo(id: ID) {
  * @returns void
  */
 export function questionAdd(data: QuestionForm) {
-    return alovaInstance.postWithMsg<void>('/knowledge/question', data);
+  return alovaInstance.postWithMsg<void>('/knowledge/question', data);
 }
 
 /**
@@ -49,7 +46,7 @@ export function questionAdd(data: QuestionForm) {
  * @returns void
  */
 export function questionUpdate(data: QuestionForm) {
-    return alovaInstance.putWithMsg<void>('/knowledge/question', data);
+  return alovaInstance.putWithMsg<void>('/knowledge/question', data);
 }
 
 /**
@@ -58,5 +55,5 @@ export function questionUpdate(data: QuestionForm) {
  * @returns void
  */
 export function questionRemove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/knowledge/question/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/knowledge/question/${id}`);
 }

@@ -14,12 +14,12 @@ import { Popconfirm, Space } from "antdv-next";
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from "#/adapter/vxe-table";
 
-import { modelList, modelRemove, modelStatusChange } from "./api";
+import { modelList, modelRemove, modelStatusChange } from "#/api/model/model/index";
 import ApiSwitch from "#/components/global/api-switch.vue";
 import { columns, querySchema } from "./data";
 
 import ModelModal from "./model-modal.vue";
-import type { ModelForm } from "./api/model";
+import type { ModelForm } from "#/api/model/model/model.d";
 
 const { hasAccessByCodes } = useAccess();
 
@@ -116,52 +116,28 @@ async function handleChangeStatus(
         <span class="pl-[7px] text-[16px]">模型列表</span>
       </template>
       <template #status="{ row }">
-        <ApiSwitch
-          :value="row.status === EnableStatus.Enable"
-          :api="(checked) => handleChangeStatus(checked, row)"
-          :disabled="!hasAccessByCodes(['model:model:edit'])"
-          @reload="() => tableApi.query()"
-        />
+        <ApiSwitch :value="row.status === EnableStatus.Enable" :api="(checked) => handleChangeStatus(checked, row)"
+          :disabled="!hasAccessByCodes(['model:model:edit'])" @reload="() => tableApi.query()" />
       </template>
       <template #toolbar-tools>
         <Space>
-          <a-button
-            :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['model:model:remove']"
-            @click="handleMultiDelete"
-          >
+          <a-button :disabled="!vxeCheckboxChecked(tableApi)" danger type="primary"
+            v-access:code="['model:model:remove']" @click="handleMultiDelete">
             {{ $t("pages.common.delete") }}
           </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['model:model:add']"
-            @click="handleAdd"
-          >
+          <a-button type="primary" v-access:code="['model:model:add']" @click="handleAdd">
             {{ $t("pages.common.add") }}
           </a-button>
         </Space>
       </template>
       <template #action="{ row }">
         <Space>
-          <action-button
-            v-access:code="['model:model:edit']"
-            @click.stop="handleEdit(row)"
-          >
+          <action-button v-access:code="['model:model:edit']" @click.stop="handleEdit(row)">
             {{ $t("pages.common.edit") }}
           </action-button>
-          <Popconfirm
-            :get-popup-container="getPopupContainer"
-            placement="left"
-            title="确认删除？"
-            @confirm="handleDelete(row)"
-          >
-            <action-button
-              danger
-              v-access:code="['model:model:remove']"
-              @click.stop=""
-            >
+          <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
+            @confirm="handleDelete(row)">
+            <action-button danger v-access:code="['model:model:remove']" @click.stop="">
               {{ $t("pages.common.delete") }}
             </action-button>
           </Popconfirm>

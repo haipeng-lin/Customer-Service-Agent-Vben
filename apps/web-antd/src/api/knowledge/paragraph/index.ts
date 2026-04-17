@@ -10,10 +10,7 @@ import { alovaInstance } from '#/utils/http';
  * @returns 段落列表
  */
 export function paragraphList(params?: ParagraphQuery) {
-    return alovaInstance.get<PageResult<ParagraphVO>>(
-        '/knowledge/paragraph/list',
-        { params },
-    );
+  return alovaInstance.get<PageResult<ParagraphVO>>('/knowledge/paragraph/list', { params });
 }
 
 /**
@@ -22,7 +19,7 @@ export function paragraphList(params?: ParagraphQuery) {
  * @returns void
  */
 export function paragraphExport(params?: ParagraphQuery) {
-    return commonExport('/knowledge/paragraph/export', params ?? {});
+  return commonExport('/knowledge/paragraph/export', params ?? {});
 }
 
 /**
@@ -31,7 +28,7 @@ export function paragraphExport(params?: ParagraphQuery) {
  * @returns 段落详情
  */
 export function paragraphInfo(id: ID) {
-    return alovaInstance.get<ParagraphVO>(`/knowledge/paragraph/${id}`);
+  return alovaInstance.get<ParagraphVO>(`/knowledge/paragraph/${id}`);
 }
 
 /**
@@ -40,7 +37,7 @@ export function paragraphInfo(id: ID) {
  * @returns void
  */
 export function paragraphAdd(data: ParagraphForm) {
-    return alovaInstance.postWithMsg<void>('/knowledge/paragraph', data);
+  return alovaInstance.postWithMsg<void>('/knowledge/paragraph', data);
 }
 
 /**
@@ -49,7 +46,7 @@ export function paragraphAdd(data: ParagraphForm) {
  * @returns void
  */
 export function paragraphUpdate(data: ParagraphForm) {
-    return alovaInstance.putWithMsg<void>('/knowledge/paragraph', data);
+  return alovaInstance.putWithMsg<void>('/knowledge/paragraph', data);
 }
 
 /**
@@ -58,7 +55,7 @@ export function paragraphUpdate(data: ParagraphForm) {
  * @returns void
  */
 export function paragraphRemove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/knowledge/paragraph/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/knowledge/paragraph/${id}`);
 }
 
 /**
@@ -67,14 +64,11 @@ export function paragraphRemove(id: ID | IDS) {
  * @returns void
  */
 export function paragraphStatusChange(data: Partial<ParagraphForm>) {
-    const requestData = {
-        id: data.id,
-        status: data.status,
-    };
-    return alovaInstance.putWithMsg<void>(
-        '/knowledge/paragraph/changeStatus',
-        requestData,
-    );
+  const requestData = {
+    id: data.id,
+    status: data.status,
+  };
+  return alovaInstance.putWithMsg<void>('/knowledge/paragraph/changeStatus', requestData);
 }
 
 /**
@@ -83,8 +77,5 @@ export function paragraphStatusChange(data: Partial<ParagraphForm>) {
  * @returns 段落全部列表
  */
 export function paragraphListAll(params?: ParagraphQuery) {
-    return alovaInstance.get<ParagraphVO[]>(
-        '/knowledge/paragraph/listAll',
-        { params },
-    );
+  return alovaInstance.get<ParagraphVO[]>('/knowledge/paragraph/listAll', { params });
 }

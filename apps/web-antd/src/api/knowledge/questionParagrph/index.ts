@@ -10,10 +10,9 @@ import { alovaInstance } from '#/utils/http';
  * @returns 问题段落列表
  */
 export function questionParagraphList(params?: QuestionParagraphQuery) {
-    return alovaInstance.get<PageResult<QuestionParagraphVO>>(
-        '/knowledge/questionParagraph/list',
-        { params },
-    );
+  return alovaInstance.get<PageResult<QuestionParagraphVO>>('/knowledge/questionParagraph/list', {
+    params,
+  });
 }
 
 /**
@@ -22,7 +21,7 @@ export function questionParagraphList(params?: QuestionParagraphQuery) {
  * @returns void
  */
 export function questionParagraphExport(params?: QuestionParagraphQuery) {
-    return commonExport('/knowledge/questionParagraph/export', params ?? {});
+  return commonExport('/knowledge/questionParagraph/export', params ?? {});
 }
 
 /**
@@ -31,7 +30,7 @@ export function questionParagraphExport(params?: QuestionParagraphQuery) {
  * @returns 问题段落详情
  */
 export function questionParagraphInfo(id: ID) {
-    return alovaInstance.get<QuestionParagraphVO>(`/knowledge/questionParagraph/${id}`);
+  return alovaInstance.get<QuestionParagraphVO>(`/knowledge/questionParagraph/${id}`);
 }
 
 /**
@@ -40,7 +39,7 @@ export function questionParagraphInfo(id: ID) {
  * @returns void
  */
 export function questionParagraphAdd(data: QuestionParagraphForm) {
-    return alovaInstance.postWithMsg<void>('/knowledge/questionParagraph', data);
+  return alovaInstance.postWithMsg<void>('/knowledge/questionParagraph', data);
 }
 
 /**
@@ -49,7 +48,7 @@ export function questionParagraphAdd(data: QuestionParagraphForm) {
  * @returns void
  */
 export function questionParagraphUpdate(data: QuestionParagraphForm) {
-    return alovaInstance.putWithMsg<void>('/knowledge/questionParagraph', data);
+  return alovaInstance.putWithMsg<void>('/knowledge/questionParagraph', data);
 }
 
 /**
@@ -58,5 +57,5 @@ export function questionParagraphUpdate(data: QuestionParagraphForm) {
  * @returns void
  */
 export function questionParagraphRemove(id: ID | IDS) {
-    return alovaInstance.deleteWithMsg<void>(`/knowledge/questionParagraph/\${id}`);
+  return alovaInstance.deleteWithMsg<void>(`/knowledge/questionParagraph/${id}`);
 }

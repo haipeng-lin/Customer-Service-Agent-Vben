@@ -7,7 +7,7 @@ import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 
-import { modelAdd, modelInfo, modelUpdate } from './api';
+import { modelAdd, modelInfo, modelUpdate } from '#/api/model/model/index';
 import { modalSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();

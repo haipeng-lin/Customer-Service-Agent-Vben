@@ -66,8 +66,8 @@ export const querySchema = (): VbenFormSchema[] => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
   { field: 'id', title: 'Id', width: 200 },
-  { field: 'datasetId', title: '知识库Id' },
-  { field: 'documentId', title: '文档Id' },
+  { field: 'datasetTitle', title: '知识库' },
+  { field: 'documentTitle', title: '文档' },
   { field: 'title', title: '段落标题' },
   { field: 'content', title: '段落内容' },
   {
@@ -141,5 +141,4 @@ export const modalSchema = (): VbenFormSchema[] => [
     label: '段落内容',
     component: 'Input',
   },
-
 ];
