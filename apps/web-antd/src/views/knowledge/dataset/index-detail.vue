@@ -43,7 +43,7 @@ function handleNavClick(key: string) {
 }
 
 function goBack() {
-  router.push("/knowledge/dataset-card");
+  router.push("/dataset/card");
 }
 </script>
 
