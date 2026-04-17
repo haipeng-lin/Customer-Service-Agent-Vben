@@ -27,7 +27,7 @@ const formData = reactive<{
     autoClean: number;
   };
   documentList: any[];
-  datasetId?: number | string;
+  datasetId?: string;
 }>({
   fileList: [],
   fileType: 'txt',
@@ -38,7 +38,7 @@ const formData = reactive<{
     autoClean: 1,
   },
   documentList: [],
-  datasetId: route.query.datasetId || undefined,
+  datasetId: String(route.query.datasetId) || undefined,
 });
 
 function handleStep1Next(step1Values: typeof formData) {
