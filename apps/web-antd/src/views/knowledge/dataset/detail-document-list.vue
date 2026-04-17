@@ -7,7 +7,7 @@ import type { VxeGridProps } from "#/adapter/vxe-table";
 import { computed, ref } from "vue";
 
 import { useAccess } from "@vben/access";
-import { Page, useVbenModal } from "@vben/common-ui";
+import { Page, useVbenDrawer, useVbenModal } from "@vben/common-ui";
 import { EnableStatus } from "@vben/constants";
 import { getPopupContainer } from "@vben/utils";
 import { Popconfirm, Space } from "antdv-next";
@@ -24,6 +24,8 @@ import { columns, querySchema } from "../document/data";
 
 import DocumentModal from "../document/document-modal.vue";
 import type { DocumentForm } from "#/api/knowledge/document/model";
+
+import ParagraphDrawerComp from "#/components/paragraph/paragraph-drawer.vue";
 
 const props = defineProps<{
   datasetId: string;
@@ -85,6 +87,15 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [FormModal, modalApi] = useVbenModal({
   connectedComponent: DocumentModal,
 });
+
+const [ParagraphDrawer, paragraphDrawerApi] = useVbenDrawer({
+  connectedComponent: ParagraphDrawerComp,
+});
+
+function handleParagraph(row: Recordable<any>) {
+  paragraphDrawerApi.setData({ id: row.id });
+  paragraphDrawerApi.open();
+}
 
 function handleAdd() {
   modalApi.setData({ datasetId: props.datasetId });
@@ -153,6 +164,9 @@ async function handleChangeStatus(
           <action-button v-access:code="['knowledge:document:edit']" @click.stop="handleEdit(row)">
             {{ $t("pages.common.edit") }}
           </action-button>
+          <action-button v-access:code="['knowledge:paragraph:list']" @click.stop="handleParagraph(row)">
+            分段
+          </action-button>
           <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
             @confirm="handleDelete(row)">
             <action-button danger v-access:code="['knowledge:document:remove']" @click.stop="">
@@ -163,5 +177,6 @@ async function handleChangeStatus(
       </template>
     </BasicTable>
     <FormModal @reload="tableApi.query()" />
+    <ParagraphDrawer @reload="tableApi.query()" />
   </Page>
 </template>
