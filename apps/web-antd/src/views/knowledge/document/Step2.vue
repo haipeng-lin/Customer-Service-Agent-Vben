@@ -24,7 +24,7 @@ const emit = defineEmits<{
 }>();
 
 const diyForm = reactive({
-  splitType: props.initialData.diyForm?.splitType || 1,
+  splitType: props.initialData.diyForm?.splitType || 0,
   pattern: props.initialData.diyForm?.pattern || "",
   splitLen: props.initialData.diyForm?.splitLen || 512,
   autoClean: props.initialData.diyForm?.autoClean || 1,
@@ -52,11 +52,11 @@ const [BasicForm, formApi] = useVbenForm({
       fieldName: "splitType",
       label: "分段规则",
       component: "RadioGroup",
-      defaultValue: 1,
+      defaultValue: 0,
       componentProps: {
         options: [
-          { label: "默认分段", value: 1 },
-          { label: "自定义分段", value: 2 },
+          { label: "默认分段", value: 0 },
+          { label: "自定义分段", value: 1 },
         ],
         onChange: (e: any) => {
           diyForm.splitType = e.target.value;
@@ -75,7 +75,7 @@ const [BasicForm, formApi] = useVbenForm({
         },
       },
       dependencies: {
-        show: () => diyForm.splitType === 2,
+        show: () => diyForm.splitType === 1,
         triggerFields: ["splitType"],
       },
     },
@@ -92,7 +92,7 @@ const [BasicForm, formApi] = useVbenForm({
         },
       },
       dependencies: {
-        show: () => diyForm.splitType === 2,
+        show: () => diyForm.splitType === 1,
         triggerFields: ["splitType"],
       },
     },
@@ -111,7 +111,7 @@ const [BasicForm, formApi] = useVbenForm({
         },
       },
       dependencies: {
-        show: () => diyForm.splitType === 2,
+        show: () => diyForm.splitType === 1,
         triggerFields: ["splitType"],
       },
     },
@@ -295,17 +295,12 @@ function handleNext() {
 
         <!-- 文件标签列表 -->
         <div v-if="segmentTitle.length > 0" class="mb-4 flex flex-wrap gap-2">
-          <div
-            v-for="(item, index) in segmentTitle"
-            :key="index"
-            :class="[
-              'flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-sm',
-              index === nowFileIndex
-                ? 'border-blue-500 bg-blue-500 text-white'
-                : 'border-gray-300 hover:border-blue-500',
-            ]"
-            @click="handleFileSwitch(index)"
-          >
+          <div v-for="(item, index) in segmentTitle" :key="index" :class="[
+            'flex cursor-pointer items-center gap-1 rounded border px-2 py-1 text-sm',
+            index === nowFileIndex
+              ? 'border-blue-500 bg-blue-500 text-white'
+              : 'border-gray-300 hover:border-blue-500',
+          ]" @click="handleFileSwitch(index)">
             <VbenIcon icon="icon-[lucide--file-text]" />
             <span class="max-w-24 truncate">{{ item }}</span>
           </div>
@@ -317,24 +312,14 @@ function handleNext() {
 
         <!-- 片段列表 -->
         <div class="mt-3 max-h-[400px] overflow-y-auto">
-          <div
-            v-for="(item, index) in nowSegmentData"
-            :key="index"
-            class="mb-3 rounded bg-gray-50 p-4"
-          >
+          <div v-for="(item, index) in nowSegmentData" :key="index" class="mb-3 rounded bg-gray-50 p-4">
             <div class="mb-2 flex items-center justify-between">
               <span class="font-medium text-blue-500">#{{ index + 1 }}</span>
               <div class="flex gap-2">
-                <VbenIcon
-                  icon="icon-[lucide--pencil]"
-                  class="cursor-pointer text-gray-400 hover:text-blue-500"
-                  @click="editSegment(index)"
-                />
-                <VbenIcon
-                  icon="icon-[lucide--trash2]"
-                  class="cursor-pointer text-gray-400 hover:text-red-500"
-                  @click="delSegment(index)"
-                />
+                <VbenIcon icon="icon-[lucide--pencil]" class="cursor-pointer text-gray-400 hover:text-blue-500"
+                  @click="editSegment(index)" />
+                <VbenIcon icon="icon-[lucide--trash2]" class="cursor-pointer text-gray-400 hover:text-red-500"
+                  @click="delSegment(index)" />
               </div>
             </div>
             <div class="mb-2">
@@ -347,10 +332,7 @@ function handleNext() {
             </div>
           </div>
 
-          <div
-            v-if="nowSegmentData.length === 0"
-            class="py-8 text-center text-gray-400"
-          >
+          <div v-if="nowSegmentData.length === 0" class="py-8 text-center text-gray-400">
             暂无预览数据
           </div>
         </div>
@@ -365,29 +347,13 @@ function handleNext() {
     </div>
 
     <!-- 编辑弹窗 -->
-    <Modal
-      :open="editorVisible"
-      title="修改段落"
-      width="800px"
-      @cancel="editorVisible = false"
-    >
+    <Modal :open="editorVisible" title="修改段落" width="800px" @cancel="editorVisible = false">
       <Form :model="editForm" layout="vertical">
         <FormItem label="段落标题">
-          <Input
-            v-model:value="editForm.title"
-            placeholder="标题"
-            :maxlength="255"
-            show-count
-          />
+          <Input v-model:value="editForm.title" placeholder="标题" :maxlength="255" show-count />
         </FormItem>
         <FormItem label="段落内容">
-          <Input
-            v-model:value="editForm.content"
-            type="textarea"
-            :rows="12"
-            :maxlength="8000"
-            show-count
-          />
+          <Input v-model:value="editForm.content" type="textarea" :rows="12" :maxlength="8000" show-count />
         </FormItem>
       </Form>
       <template #footer>

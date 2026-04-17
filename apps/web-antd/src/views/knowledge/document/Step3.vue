@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
+import { Button, message } from 'antdv-next';
+
 import { VbenIcon } from '@vben/icons';
 import { useRouter } from 'vue-router';
 
@@ -22,6 +24,8 @@ const emit = defineEmits<{
   'set-loading': [value: boolean];
 }>();
 
+const [messageApi, ContextHolder] = message.useMessage();
+
 const router = useRouter();
 const loading = ref(false);
 const success = ref(false);
@@ -29,7 +33,7 @@ const errorMsg = ref('');
 
 async function handleSubmit() {
   if (!props.initialData.datasetId) {
-    window.$message.error('缺少知识库ID');
+    messageApi.error('缺少知识库ID');
     return;
   }
 
@@ -37,21 +41,15 @@ async function handleSubmit() {
   emit('set-loading', true);
 
   try {
-    const res = await saveDocument({
+    await saveDocument({
       documentList: props.initialData.documentList,
-      datasetId: Number(props.initialData.datasetId),
+      datasetId: props.initialData.datasetId,
     });
-
-    if (res.code === 200) {
-      success.value = true;
-      window.$message.success('上传成功');
-    } else {
-      errorMsg.value = res.msg || '保存失败';
-      window.$message.error(res.msg || '保存失败');
-    }
+    success.value = true;
+    messageApi.success('上传成功');
   } catch (err: any) {
     errorMsg.value = err?.message || '保存失败';
-    window.$message.error(err?.message || '保存失败');
+    messageApi.error(err?.message || '保存失败');
   } finally {
     loading.value = false;
     emit('set-loading', false);
@@ -59,7 +57,7 @@ async function handleSubmit() {
 }
 
 function handleGoToList() {
-  router.push('/knowledge/document');
+  router.push('/datasetDetail/' + props.initialData.datasetId);
 }
 
 onMounted(() => {
@@ -72,11 +70,15 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col items-center justify-center py-8">
+    <ContextHolder />
+
+    <!-- 加载中状态 -->
     <div v-if="loading" class="flex flex-col items-center">
       <VbenIcon icon="icon-[lucide--loader-2]" class="mb-4 text-5xl text-blue-500 animate-spin" />
       <p class="text-lg text-gray-600">正在上传文档...</p>
     </div>
 
+    <!-- 成功状态 -->
     <div v-else-if="success" class="flex flex-col items-center">
       <VbenIcon icon="icon-[lucide--check-circle-2]" class="mb-4 text-5xl text-green-500" />
       <p class="mb-2 text-lg font-medium text-gray-800">上传成功</p>
@@ -84,26 +86,27 @@ onMounted(() => {
         已成功上传 {{ initialData.documentList?.length || 0 }} 个文档片段
       </p>
       <div class="flex gap-3">
-        <el-button type="primary" @click="handleGoToList">
+        <Button type="primary" @click="handleGoToList">
           返回文档列表
-        </el-button>
-        <el-button @click="emit('redo')">
+        </Button>
+        <Button @click="emit('redo')">
           继续上传
-        </el-button>
+        </Button>
       </div>
     </div>
 
+    <!-- 失败状态 -->
     <div v-else class="flex flex-col items-center">
       <VbenIcon icon="icon-[lucide--x-circle]" class="mb-4 text-5xl text-red-500" />
       <p class="mb-2 text-lg font-medium text-gray-800">上传失败</p>
       <p class="mb-6 text-sm text-gray-500">{{ errorMsg }}</p>
       <div class="flex gap-3">
-        <el-button @click="handleGoToList">
+        <Button @click="handleGoToList">
           返回文档列表
-        </el-button>
-        <el-button type="primary" @click="handleSubmit">
+        </Button>
+        <Button type="primary" @click="handleSubmit">
           重新上传
-        </el-button>
+        </Button>
       </div>
     </div>
   </div>
