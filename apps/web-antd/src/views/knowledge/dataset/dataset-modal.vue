@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, nextTick, ref } from "vue";
 
 import { useVbenModal } from "@vben/common-ui";
 import { $t } from "@vben/locales";
@@ -13,8 +13,8 @@ import {
   datasetInfo,
   datasetUpdate,
 } from '#/api/knowledge/dataset/index';
-import { modelListAll } from "#/views/model/model/api/index";
-import type { ModelVO } from "#/api/knowledge/dataset/model";
+import { modelListAll } from "#/api/model/model/index";
+import type { ModelVO } from "#/api/model/model/model.d";
 
 const emit = defineEmits<{ reload: [] }>();
 
