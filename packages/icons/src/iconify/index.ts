@@ -20,3 +20,9 @@ export const RiDingding = createIconifyIcon('ri:dingding-fill');
 
 // 上传
 export const MdiTrayUpload = createIconifyIcon('mdi:tray-upload');
+
+export const MdiMoreVert = createIconifyIcon('mdi:more-vert');
+
+export const MdiLightSettings = createIconifyIcon('mdi-light:settings');
+
+export const MdiDelete = createIconifyIcon('mdi:delete');
