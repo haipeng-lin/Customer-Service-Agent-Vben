@@ -23,8 +23,7 @@ export const DictEnum = {
   APP_SEARCH_TYPE: 'app_search_type', // 检索类型
   APP_SESSION_SOURCE_TYPE: 'app_session_source_type', // 会话来源类型
   APP_SESSION_STATUS: 'app_session_status', // 会话状态
-
-
+  MD_TOKEN_CONSUME_TYPE: 'md_token_consume_type', // token消耗类型
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;
