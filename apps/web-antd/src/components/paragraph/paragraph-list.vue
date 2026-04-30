@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import type { Recordable } from "@vben/types";
 
-import { reactive, ref, watch } from "vue";
+import { ref, watch } from "vue";
 
 import { useAccess } from "@vben/access";
+import { EnableStatus } from "@vben/constants";
 import { $t } from "@vben/locales";
 import { getPopupContainer } from "@vben/utils";
-import { Popconfirm, Space, Switch } from "antdv-next";
+import { cloneDeep } from "@vben/utils";
+import { Empty, Pagination, Popconfirm, Space } from "antdv-next";
+
+import { useVbenModal } from "@vben/common-ui";
+import { useVbenForm } from "#/adapter/form";
 
 import {
   paragraphAdd,
@@ -16,10 +21,12 @@ import {
   paragraphStatusChange,
   paragraphUpdate,
 } from "#/api/knowledge/paragraph/index";
+import ApiSwitch from "#/components/global/api-switch.vue";
 import type { ParagraphForm, ParagraphVO } from "#/api/knowledge/paragraph/model";
 
 const props = defineProps<{
   documentId: string | number;
+  datasetId?: string | number;
 }>();
 
 const emit = defineEmits<{ refresh: [] }>();
@@ -28,33 +35,83 @@ const { hasAccessByCodes } = useAccess();
 
 const paragraphList = ref<ParagraphVO[]>([]);
 const loading = ref(false);
-const submitLoading = ref(false);
-const open = ref(false);
-const dialogTitle = ref("");
+const isUpdate = ref(false);
+const hiddenData = ref<{ id?: number | string; datasetId?: number | string; documentId?: number | string }>({});
 
-const data = reactive<{
-  form: ParagraphForm;
-  rules: Recordable<any>;
-}>({
-  form: {},
-  rules: {
-    title: [{ required: true, message: "标题不能为空", trigger: "blur" }],
-    content: [{ required: true, message: "内容不能为空", trigger: "blur" }],
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    formItemClass: "col-span-2",
+    labelWidth: 80,
+    componentProps: {
+      class: "w-full",
+    },
+  },
+  schema: [
+    {
+      fieldName: "title",
+      label: "段落标题",
+      component: "Input",
+      componentProps: {
+        placeholder: "请输入段落标题",
+        maxlength: 255,
+        showCount: true,
+      },
+    },
+    {
+      fieldName: "content",
+      label: "段落内容",
+      component: "Textarea",
+      componentProps: {
+        placeholder: "请输入段落内容",
+        maxlength: 2000,
+        showCount: true,
+        rows: 12,
+      },
+    },
+  ],
+  showDefaultActions: false,
+  wrapperClass: "grid-cols-1",
+});
+
+const [BasicModal, modalApi] = useVbenModal({
+  fullscreenButton: false,
+  onCancel: handleCancel,
+  onConfirm: handleConfirm,
+  onOpenChange: async (isOpen) => {
+    if (!isOpen) return null;
+    modalApi.modalLoading(true);
+
+    if (isUpdate.value) {
+      const { id, datasetId, documentId } = modalApi.getData() as { id?: number | string; datasetId?: number | string; documentId?: number | string };
+      hiddenData.value = { id, datasetId, documentId };
+      if (id) {
+        const record = await paragraphInfo(id);
+        await formApi.setValues(record);
+      }
+    } else {
+      hiddenData.value = {
+        documentId: props.documentId,
+        datasetId: props.datasetId,
+      };
+      await formApi.resetForm();
+    }
+
+    modalApi.modalLoading(false);
   },
 });
 
-const { form, rules } = data;
-
 const total = ref(0);
+const current = ref(1);
+const pageSize = ref(10);
 const queryParams: {
   pageNum: number;
   pageSize: number;
   documentId: number | string;
-} = reactive({
+} = {
   pageNum: 1,
   pageSize: 10,
   documentId: 0 as number | string,
-});
+};
 
 async function fetchList() {
   if (!props.documentId) return;
@@ -69,35 +126,37 @@ async function fetchList() {
   }
 }
 
+function handlePageChange(page: number, size: number) {
+  current.value = page;
+  pageSize.value = size;
+  queryParams.pageNum = page;
+  queryParams.pageSize = size;
+  fetchList();
+}
+
 watch(
   () => props.documentId,
   (val) => {
-    if (val) fetchList();
+    if (val) {
+      current.value = 1;
+      queryParams.pageNum = 1;
+      fetchList();
+    }
   },
   { immediate: true },
 );
 
-function resetForm() {
-  form.id = undefined;
-  form.datasetId = undefined;
-  form.documentId = props.documentId as number | string;
-  form.title = undefined;
-  form.content = undefined;
-  form.indexStatus = "0";
-  form.status = "0";
-}
-
 function handleAdd() {
-  resetForm();
-  open.value = true;
-  dialogTitle.value = "添加段落";
+  isUpdate.value = false;
+  modalApi.setData({});
+  modalApi.open();
 }
 
-async function handleUpdate(row: ParagraphVO) {
-  const response = await paragraphInfo(row.id);
-  Object.assign(form, response);
-  open.value = true;
-  dialogTitle.value = "编辑段落";
+async function handleEdit(row: ParagraphVO) {
+  console.log('11：', row)
+  isUpdate.value = true;
+  modalApi.setData({ id: row.id, datasetId: row.datasetId, documentId: row.documentId });
+  modalApi.open();
 }
 
 async function handleDelete(row: ParagraphVO) {
@@ -106,31 +165,45 @@ async function handleDelete(row: ParagraphVO) {
   emit("refresh");
 }
 
-async function handleStatusChange(checked: boolean, row: ParagraphVO) {
+async function handleStatusChange(checked: any, row: ParagraphVO) {
   await paragraphStatusChange({
     id: row.id,
-    status: checked ? "0" : "1",
+    status: checked ? EnableStatus.Enable : EnableStatus.Disable,
   });
 }
 
-async function submitForm() {
+async function handleConfirm() {
   try {
-    submitLoading.value = true;
-    if (form.id) {
-      await paragraphUpdate(form as ParagraphForm);
+    modalApi.modalLoading(true);
+    const { valid } = await formApi.validate();
+    if (!valid) return;
+
+    const data = cloneDeep(await formApi.getValues());
+
+    if (isUpdate.value) {
+      data.id = hiddenData.value.id;
+      data.datasetId = hiddenData.value.datasetId;
+      data.documentId = hiddenData.value.documentId;
+      await paragraphUpdate(data);
     } else {
-      await paragraphAdd(form as ParagraphForm);
+      data.documentId = hiddenData.value.documentId;
+      data.datasetId = hiddenData.value.datasetId;
+      await paragraphAdd(data);
     }
-    open.value = false;
-    await fetchList();
+
     emit("refresh");
+    await fetchList();
+    await handleCancel();
+  } catch (error) {
+    console.error(error);
   } finally {
-    submitLoading.value = false;
+    modalApi.modalLoading(false);
   }
 }
 
-function cancel() {
-  open.value = false;
+async function handleCancel() {
+  modalApi.close();
+  await formApi.resetForm();
 }
 
 defineExpose({
@@ -145,14 +218,13 @@ defineExpose({
         <div class="title-left line1" :title="item.title">
           {{ item.title || "无标题" }}
         </div>
-        <Switch v-model="item.status" active-value="0" inactive-value="1"
-          :disabled="!hasAccessByCodes(['knowledge:paragraph:edit'])" checked-children="启用" un-checked-children="禁用"
-          @change="() => handleStatusChange(item.status === '0', item)" />
+        <ApiSwitch :value="item.status === EnableStatus.Enable" :api="(val) => handleStatusChange(val, item)"
+          :disabled="!hasAccessByCodes(['knowledge:paragraph:edit'])" />
       </div>
 
-      <el-scrollbar class="paragraph-doc cursor-pointer" @click="handleUpdate(item)">
+      <div class="paragraph-doc cursor-pointer" @click="handleEdit(item)">
         {{ item.content }}
-      </el-scrollbar>
+      </div>
 
       <div class="paragraph-bottom">
         <div class="bottom-info">
@@ -160,7 +232,7 @@ defineExpose({
         </div>
         <Space>
           <a-button size="small" type="text" v-access:code="['knowledge:paragraph:edit']"
-            @click.stop="handleUpdate(item)">
+            @click.stop="handleEdit(item)">
             {{ $t("pages.common.edit") }}
           </a-button>
           <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
@@ -173,11 +245,20 @@ defineExpose({
       </div>
     </div>
 
-    <el-empty v-if="paragraphList.length === 0" :description="loading ? '' : '暂无段落数据'" style="width: 100%" />
+    <Empty v-if="paragraphList.length === 0" :description="loading ? '' : '暂无段落数据'" style="width: 100%" />
   </div>
 
   <div class="flex justify-between items-center mt-4 px-1">
-    <span class="text-sm text-gray-500">共 {{ total }} 条</span>
+    <Pagination
+      v-model:current="current"
+      v-model:page-size="pageSize"
+      :total="total"
+      :show-size-changer="true"
+      :show-quick-jumper="true"
+      :show-total="(total: number) => `共 ${total} 条`"
+      :page-size-options="['10', '20', '50', '100']"
+      @change="handlePageChange"
+    />
     <Space>
       <a-button size="small" type="primary" v-access:code="['knowledge:paragraph:add']" @click="handleAdd">
         添加分段
@@ -186,25 +267,9 @@ defineExpose({
     </Space>
   </div>
 
-  <el-dialog v-model:open="open" :title="dialogTitle" width="700px" append-to-body draggable destroy-on-close>
-    <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="段落标题" prop="title">
-        <el-input v-model="form.title" placeholder="请输入段落标题" maxlength="255" show-word-limit />
-      </el-form-item>
-      <el-form-item label="段落内容" prop="content">
-        <el-input v-model="form.content" type="textarea" :rows="12" placeholder="请输入段落内容" maxlength="2000"
-          show-word-limit />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm" :loading="submitLoading">
-          确 定
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+  <BasicModal :title="isUpdate ? $t('pages.common.edit') : $t('pages.common.add')" class="w-[700px]">
+    <BasicForm />
+  </BasicModal>
 </template>
 
 <style scoped>
