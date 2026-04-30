@@ -26,19 +26,22 @@ const title = computed(() => {
 // 全部向量模型列表
 const allModels = ref<ModelVO[]>([]);
 
-// 将所有模型平铺为选项列表
-// 使用 "vendorId:modelName" 作为 value 以区分同一厂家的多个模型
+// 将所有模型平铺为级联选项列表
+// 第一级为厂家名称，第二级为该厂家的模型列表
 const modelOptions = computed(() => {
-  const options: { label: string; value: string }[] = [];
+  const options: { label: string; value: string; children?: { label: string; value: string }[] }[] = [];
   for (const m of allModels.value) {
     if (m.models) {
       const modelNames = m.models.split(",");
-      for (const name of modelNames) {
-        options.push({
-          label: `${m.name} - ${name.trim()}`,
-          value: `${m.id}:${name.trim()}`,
-        });
-      }
+      const children = modelNames.map((name) => ({
+        label: name.trim(),
+        value: `${m.id}:${name.trim()}`,
+      }));
+      options.push({
+        label: m.name,
+        value: String(m.id),
+        children,
+      });
     }
   }
   return options;
@@ -86,11 +89,9 @@ const [BasicModal, modalApi] = useVbenModal({
 
     if (isUpdate.value && id) {
       const record = await datasetInfo(id);
-      // 回显向量模型选择 - 将存储的值转换为选择框格式
-      if (record.embeddingModelName) {
-        const parts = record.embeddingModelName.split(",");
-        const modelName = parts[1] || "";
-        record.embeddingModelId = `${record.embeddingModelId}:${modelName}`;
+      // 回显向量模型选择 - Cascader需要数组格式 [vendorId, "vendorId:modelName"]
+      if (record.embeddingModelId && record.embeddingModelName) {
+        record.embeddingModelId = [String(record.embeddingModelId), `${record.embeddingModelId}:${record.embeddingModelName}`];
       }
       await formApi.setValues(record);
     } else {
@@ -111,20 +112,13 @@ async function handleConfirm() {
 
     const data = cloneDeep(await formApi.getValues());
 
-    // 解析向量模型字段
+    // 解析向量模型字段 - Cascader返回数组格式 [vendorId, "vendorId:modelName"]
     const modelValue = data.embeddingModelId;
-    if (
-      modelValue &&
-      typeof modelValue === "string" &&
-      modelValue.includes(":")
-    ) {
-      const [modelId, modelName] = modelValue.split(":");
-      data.embeddingModelId = modelId;
-      // 查找对应的厂家标识
-      const model = allModels.value.find((m) => m.id == modelId);
-      if (model) {
-        data.embeddingModelName = `${modelName}`;
-      } else {
+    if (Array.isArray(modelValue) && modelValue.length >= 2) {
+      const fullValue = modelValue[modelValue.length - 1];
+      if (fullValue && typeof fullValue === "string" && fullValue.includes(":")) {
+        const [modelId, modelName] = fullValue.split(":");
+        data.embeddingModelId = modelId;
         data.embeddingModelName = modelName;
       }
     }

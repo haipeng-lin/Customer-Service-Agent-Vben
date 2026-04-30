@@ -3,7 +3,7 @@ import type { SwitchProps } from "antdv-next";
 
 import { onMounted, ref } from "vue";
 
-import { MdiTrayUpload } from '@vben/icons';
+import { MdiTrayUpload, MdiLightSettings, MdiDelete } from '@vben/icons';
 
 import { useAccess } from "@vben/access";
 import { Page, useVbenModal } from "@vben/common-ui";
@@ -92,49 +92,56 @@ function handleUpload(item: DatasetVO) {
     <!-- 白色内容区 -->
     <div class="min-h-full bg-white p-4">
       <!-- 页面标题 -->
-      <div class="mb-4">
+      <div class="mb-4 flex items-center justify-between">
         <span class="text-lg font-semibold">知识库</span>
+        <a-button v-access:code="['knowledge:dataset:add']" type="primary" @click="handleAdd">
+          新增知识库
+        </a-button>
       </div>
 
       <!-- 卡片网格 -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-        <!-- 新增卡片（第一行第一个位置） -->
-        <div
-          class="flex h-[200px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
-          @click="handleAdd">
-          <div class="text-4xl text-gray-400 hover:text-gray-600">+</div>
-          <div class="mt-2 text-sm text-gray-400">新增知识库</div>
-        </div>
-
         <!-- 知识库卡片 -->
         <div v-for="item in datasetList" :key="item.id"
           class="flex h-[200px] flex-col justify-between rounded-lg border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md cursor-pointer"
           @click="handleCardClick(item)">
-          <!-- 顶部：标题 + 状态 -->
-          <div class="flex items-start justify-between">
-            <div class="flex-1 truncate pr-2 text-lg font-semibold" :title="item.title">
-              {{ item.title }}
+          <!-- 顶部：图标 + 标题 + 创建人 -->
+          <div class="flex items-start gap-3">
+            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-500 text-white text-xl font-bold">
+              {{ item.title?.charAt(0) || "?" }}
             </div>
-            <ApiSwitch :value="item.status === EnableStatus.Enable" :api="(val) => handleChangeStatus(val, item)"
-              :disabled="!hasAccessByCodes(['knowledge:dataset:edit'])" @reload="loadData" />
+            <div class="flex flex-col flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2">
+                <span class="truncate text-lg font-semibold" :title="item.title">{{ item.title }}</span>
+                <ApiSwitch :value="item.status === EnableStatus.Enable" :api="(val) => handleChangeStatus(val, item)"
+                  :disabled="!hasAccessByCodes(['knowledge:dataset:edit'])" @reload="loadData" />
+              </div>
+              <span class="text-sm text-gray-400 truncate" :title="item.createByName || ''">
+                {{ item.createByName || "未知创建人" }}
+              </span>
+            </div>
           </div>
 
           <!-- 描述 -->
-          <div class="flex-1 overflow-hidden text-sm text-gray-400" :title="item.description">
+          <div class="flex-1 overflow-hidden text-sm text-gray-400 mt-2" :title="item.description">
             {{ item.description || "暂无描述" }}
           </div>
 
-          <!-- 底部：操作按钮 -->
-          <div class="flex items-center justify-end gap-2 border-t border-gray-100 pt-2 mt-auto">
-            <MdiTrayUpload v-access:code="['knowledge:document:add']" @click.stop="handleUpload(item)" />
-
-            <VbenIcon icon="icon-[lucide--pencil]" class="cursor-pointer text-gray-400 hover:text-blue-500"
-              v-access:code="['knowledge:dataset:edit']" @click.stop="handleEdit(item)" />
-            <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
-              @confirm="handleDelete(item)">
-              <VbenIcon icon="icon-[lucide--trash2]" class="cursor-pointer text-gray-400 hover:text-red-500"
-                v-access:code="['knowledge:dataset:remove']" @click.stop="" />
-            </Popconfirm>
+          <!-- 底部：操作按钮 + 文档数和应用数 -->
+          <div class="flex items-center justify-between gap-2 border-t border-gray-100 pt-2 mt-auto">
+            <div class="flex items-center gap-4 text-sm text-gray-400">
+              <span>{{ item.documentCount }} 文档数</span>
+              <span>{{ item.applicationCount }} 应用数</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <a-button v-access:code="['knowledge:document:add']" size="small" type="link"
+                @click.stop="handleUpload(item)">
+                <template #icon>
+                  <MdiTrayUpload />
+                </template>
+                上传
+              </a-button>
+            </div>
           </div>
         </div>
       </div>

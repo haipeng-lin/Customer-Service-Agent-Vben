@@ -15,6 +15,7 @@ import { questionAdd, questionInfo, questionList, questionRemove, questionUpdate
 import { columns, querySchema } from "../question/data";
 
 import QuestionModal from "../question/question-modal.vue";
+import LinkModalComponent from "./link-modal.vue";
 
 const props = defineProps<{
   datasetId: string;
@@ -75,6 +76,10 @@ const [FormModal, modalApi] = useVbenModal({
   connectedComponent: QuestionModal,
 });
 
+const [LinkModal, linkModalApi] = useVbenModal({
+  connectedComponent: LinkModalComponent,
+});
+
 function handleAdd() {
   modalApi.setData({ datasetId: props.datasetId });
   modalApi.open();
@@ -88,6 +93,14 @@ async function handleEdit(record: Recordable<any>) {
 async function handleDelete(row: Recordable<any>) {
   await questionRemove(row.id);
   await tableApi.query();
+}
+
+function handleLink(row: Recordable<any>) {
+  linkModalApi.setData({
+    questionIds: row.id,
+    datasetId: props.datasetId,
+  });
+  linkModalApi.open();
 }
 
 function handleMultiDelete() {
@@ -134,6 +147,9 @@ function handleMultiDelete() {
       </template>
       <template #action="{ row }">
         <Space>
+          <action-button @click.stop="handleLink(row)">
+            关联
+          </action-button>
           <action-button
             v-access:code="['knowledge:question:edit']"
             @click.stop="handleEdit(row)"
@@ -158,5 +174,6 @@ function handleMultiDelete() {
       </template>
     </BasicTable>
     <FormModal @reload="tableApi.query()" />
+    <LinkModal @link-complete="tableApi.query()" />
   </Page>
 </template>

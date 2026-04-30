@@ -32,6 +32,16 @@ export interface DatasetVO {
   status: string;
 
   /**
+   * 文档数
+   */
+  documentCount: number;
+
+  /**
+   * 应用数
+   */
+  applicationCount: number;
+
+  /**
    * 租户Id
    */
   tenantId: string;
