@@ -6,6 +6,8 @@ import { getPopupContainer } from '@vben/utils';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
+import { modelListAll } from '#/api/model/model/index';
+
 /**
  * 搜索表单配置
  */
@@ -13,7 +15,17 @@ export const querySchema = (): VbenFormSchema[] => [
   {
     fieldName: 'modelId',
     label: '模型Id',
-    component: 'Input',
+    component: 'ApiSelect',
+    componentProps: {
+      allowClear: true,
+      api: modelListAll,
+      afterFetch: (data: { title: string; id: number }[]) => {
+        return data.map((item: any) => ({
+          label: item.name,
+          value: item.id,
+        }));
+      },
+    },
   },
   {
     fieldName: 'source',
@@ -21,14 +33,9 @@ export const querySchema = (): VbenFormSchema[] => [
     component: 'Select',
     componentProps: {
       getPopupContainer,
-      options: getDictOptions(DictEnum.APP_SESSION_SOURCE_TYPE),
+      options: getDictOptions(DictEnum.MD_TOKEN_CONSUME_TYPE),
       allowClear: true,
     },
-  },
-  {
-    fieldName: 'userId',
-    label: '用户Id',
-    component: 'Input',
   },
   {
     fieldName: 'applicationId',
@@ -43,22 +50,22 @@ export const querySchema = (): VbenFormSchema[] => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 50 },
   { field: 'id', title: 'Id', width: 200 },
-  { field: 'modelId', title: '模型Id' },
+  { field: 'modelName', title: '模型名称', width: 180 },
   {
     field: 'source',
     title: '消耗来源',
     slots: {
       default: ({ row }) => {
-        return renderDict(row.source, DictEnum.APP_SESSION_SOURCE_TYPE);
+        return renderDict(row.source, DictEnum.MD_TOKEN_CONSUME_TYPE);
       },
     },
   },
   { field: 'inputToken', title: '输入token数' },
   { field: 'outputToken', title: '输出token数' },
   { field: 'totalToken', title: '消耗总token' },
-  { field: 'userId', title: '用户Id' },
-  { field: 'applicationId', title: '应用Id' },
-  { field: 'messageId', title: '消息Id' },
+  { field: 'username', title: '用户' },
+  // { field: 'applicationId', title: '应用Id' },
+  // { field: 'messageId', title: '消息Id' },
   {
     field: 'action',
     fixed: 'right',
@@ -92,7 +99,7 @@ export const modalSchema = (): VbenFormSchema[] => [
     component: 'Select',
     componentProps: {
       getPopupContainer,
-      options: getDictOptions(DictEnum.APP_SESSION_SOURCE_TYPE),
+      options: getDictOptions(DictEnum.MD_TOKEN_CONSUME_TYPE),
     },
   },
   {

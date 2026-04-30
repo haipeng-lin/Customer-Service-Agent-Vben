@@ -73,18 +73,8 @@ export const columns: VxeGridProps['columns'] = [
   { field: 'id', title: 'Id', width: 200 },
   { field: 'datasetTitle', title: '知识库' },
   { field: 'title', title: '文档标题' },
-  { field: 'fileSize', title: '文件大小' },
+  // { field: 'fileSize', title: '文件大小' },
   { field: 'segmentCount', title: '分段数' },
-  {
-    field: 'embeddingStatus',
-    title: '向量状态',
-    slots: {
-      default: ({ row }) => {
-        return renderDict(row.embeddingStatus, DictEnum.KB_EMBEDDING_STATUS);
-      },
-    },
-  },
-  { field: 'embeddingTime', title: '向量时间' },
   {
     field: 'questionStatus',
     title: '问题状态',
@@ -95,6 +85,17 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   { field: 'questionTime', title: '生成问题时间' },
+  {
+    field: 'embeddingStatus',
+    title: '向量状态',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.embeddingStatus, DictEnum.KB_EMBEDDING_STATUS);
+      },
+    },
+  },
+  { field: 'embeddingTime', title: '向量时间' },
+
   {
     field: 'status',
     title: '状态',

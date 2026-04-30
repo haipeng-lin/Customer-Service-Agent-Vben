@@ -100,43 +100,17 @@ function handleMultiDelete() {
       </template>
       <template #toolbar-tools>
         <Space>
-          <a-button
-            :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['model:modelToken:remove']"
-            @click="handleMultiDelete"
-          >
+          <a-button :disabled="!vxeCheckboxChecked(tableApi)" danger type="primary"
+            v-access:code="['model:modelToken:remove']" @click="handleMultiDelete">
             {{ $t("pages.common.delete") }}
-          </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['model:modelToken:add']"
-            @click="handleAdd"
-          >
-            {{ $t("pages.common.add") }}
           </a-button>
         </Space>
       </template>
       <template #action="{ row }">
         <Space>
-          <action-button
-            v-access:code="['model:modelToken:edit']"
-            @click.stop="handleEdit(row)"
-          >
-            {{ $t("pages.common.edit") }}
-          </action-button>
-          <Popconfirm
-            :get-popup-container="getPopupContainer"
-            placement="left"
-            title="确认删除？"
-            @confirm="handleDelete(row)"
-          >
-            <action-button
-              danger
-              v-access:code="['model:modelToken:remove']"
-              @click.stop=""
-            >
+          <Popconfirm :get-popup-container="getPopupContainer" placement="left" title="确认删除？"
+            @confirm="handleDelete(row)">
+            <action-button danger v-access:code="['model:modelToken:remove']" @click.stop="">
               {{ $t("pages.common.delete") }}
             </action-button>
           </Popconfirm>

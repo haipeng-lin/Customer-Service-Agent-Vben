@@ -75,9 +75,18 @@ export const modalSchema = (): VbenFormSchema[] => [
   {
     fieldName: 'embeddingModelId',
     label: '向量模型',
-    component: 'Select',
+    component: 'ApiCascader',
     componentProps: {
       placeholder: '请选择向量模型',
+      showSearch: true,
+      style: { width: '300px' },
+      filter: (inputValue: string, path: any[]) =>
+        path.some((item) => item.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1),
+      fieldNames: {
+        label: 'label',
+        value: 'value',
+        children: 'children',
+      },
     },
   },
 ];
