@@ -20,7 +20,7 @@ import {
 import ApiSwitch from "#/components/global/api-switch.vue";
 import { VbenIcon } from "@vben/icons";
 
-import DatasetModal from "./dataset-modal.vue";
+import DatasetModal from "../dataset/dataset-modal.vue";
 import type { DatasetVO } from "#/api/knowledge/dataset/model";
 
 const { hasAccessByCodes } = useAccess();
@@ -78,7 +78,7 @@ async function handleChangeStatus(
 
 // 跳转到详情页
 function handleCardClick(item: DatasetVO) {
-  router.push(`/datasetDetail/${item.id}`);
+  router.push(`/dataset-detail/${item.id}`);
 }
 
 // 跳转到文档上传页
