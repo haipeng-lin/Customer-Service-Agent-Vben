@@ -51,6 +51,10 @@ interface StreamMessage {
   answerIng?: number; // 0-思考中, 2-生成中, 3-已完成
   feedback?: string; // 评价状态: 1-赞, 2-踩
   copied?: boolean; // 复制状态
+  inputTokens?: number; // 输入token数
+  outputTokens?: number; // 输出token数
+  totalTokens?: number; // 总token数
+  time?: number; // 耗时(秒)
 }
 const messageList = ref<StreamMessage[]>([]);
 
@@ -186,6 +190,10 @@ function executeSSE(question: string, nowIndex: number) {
           try {
             const metaData = JSON.parse(data);
             messageList.value[nowIndex].id = metaData.messageId;
+            messageList.value[nowIndex].inputTokens = metaData.inputTokens;
+            messageList.value[nowIndex].outputTokens = metaData.outputTokens;
+            messageList.value[nowIndex].totalTokens = metaData.totalTokens;
+            messageList.value[nowIndex].time = metaData.time;
           } catch (e) {
             console.error("解析 DONE 失败", e);
           }
