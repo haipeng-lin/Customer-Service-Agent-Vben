@@ -1,139 +1,127 @@
 import type { BaseEntity, PageQuery } from '#/api/common';
 
 export interface ChatSessionVO {
-    /**
-     * Id
-     */
-            id: number | string;
+  /**
+   * Id
+   */
+  id: string;
 
-    /**
-     * 用户Id
-     */
-                userId: number;
+  /**
+   * 用户Id
+   */
+  userId: string;
 
-    /**
-     * 应用Id
-     */
-                applicationId: number;
+  /**
+   * 应用Id
+   */
+  applicationId: string;
 
-    /**
-     * 标题
-     */
-                title: string;
+  /**
+   * 标题
+   */
+  title: string;
 
-    /**
-     * 来源（0-网页 1-APP）
-     */
-                source: string;
+  /**
+   * 来源（0-网页 1-APP）
+   */
+  source: string;
 
-    /**
-     * 状态（0-AI 1-人工 2-结束）
-     */
-                status: string;
+  /**
+   * 状态（0-AI 1-人工 2-结束）
+   */
+  status: string;
 
-    /**
-     * 租户Id
-     */
-                tenantId: string;
+  /**
+   * 租户Id
+   */
+  tenantId: string;
 
-    /**
-     * 创建部门
-     */
-                createDept: number;
+  /**
+   * 创建部门
+   */
+  createDept: string;
 
-    /**
-     * 创建人
-     */
-                createBy: number;
-
-    /**
-     * 创建时间
-     */
-                createTime: ${column.tsType};
-
+  /**
+   * 创建人
+   */
+  createBy: string;
 }
 
 export interface ChatSessionForm extends BaseEntity {
-    /**
-     * Id
-     */
-            id?: number | string;
+  /**
+   * Id
+   */
+  id?: number | string;
 
-    /**
-     * 用户Id
-     */
-                userId?: number;
+  /**
+   * 用户Id
+   */
+  userId?: number;
 
-    /**
-     * 应用Id
-     */
-                applicationId?: number;
+  /**
+   * 应用Id
+   */
+  applicationId?: number;
 
-    /**
-     * 标题
-     */
-                title?: string;
+  /**
+   * 标题
+   */
+  title?: string;
 
-    /**
-     * 来源（0-网页 1-APP）
-     */
-                source?: string;
+  /**
+   * 来源（0-网页 1-APP）
+   */
+  source?: string;
 
-    /**
-     * 状态（0-AI 1-人工 2-结束）
-     */
-                status?: string;
+  /**
+   * 状态（0-AI 1-人工 2-结束）
+   */
+  status?: string;
 
-    /**
-     * 租户Id
-     */
-                tenantId?: string;
+  /**
+   * 租户Id
+   */
+  tenantId?: string;
 
-    /**
-     * 创建部门
-     */
-                createDept?: number;
+  /**
+   * 创建部门
+   */
+  createDept?: number;
 
-    /**
-     * 创建人
-     */
-                createBy?: number;
-
-    /**
-     * 创建时间
-     */
-                createTime?: ${column.tsType};
-
+  /**
+   * 创建人
+   */
+  createBy?: number;
 }
 
 export interface ChatSessionQuery extends PageQuery {
-        /**
-         * 用户Id
-         */
-                    userId?: number;
+  /**
+   * 用户Id
+   */
+  userId?: number;
 
-        /**
-         * 应用Id
-         */
-                    applicationId?: number;
+  /**
+   * 应用Id
+   */
+  applicationId?: string;
 
-        /**
-         * 标题
-         */
-                title?: string;
+  /**
+   * 标题
+   */
+  title?: string;
 
-        /**
-         * 来源（0-网页 1-APP）
-         */
-                source?: string;
+  /**
+   * 来源（0-网页 1-APP）
+   */
+  source?: string;
 
-        /**
-         * 状态（0-AI 1-人工 2-结束）
-         */
-                status?: string;
+  /**
+   * 状态（0-AI 1-人工 2-结束）
+   */
+  status?: string;
 
-    /**
-     * 日期范围参数
-     */
-    params?: any;
+  /**
+   * 日期范围参数
+   */
+  params?: any;
 }

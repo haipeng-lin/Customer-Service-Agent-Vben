@@ -79,10 +79,7 @@ export function generateQuestion(data: {
  * @param data
  * @returns 关联数据列表
  */
-export function getQuestionRelation(data: {
-  questionIds: string;
-  datasetId: number | string;
-}) {
+export function getQuestionRelation(data: { questionIds: string; datasetId: number | string }) {
   return alovaInstance.get<any[]>('/api/v1/application/getQuestionRelation', {
     params: data,
   });
