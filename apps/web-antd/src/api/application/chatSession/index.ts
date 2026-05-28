@@ -57,3 +57,12 @@ export function chatSessionUpdate(data: ChatSessionForm) {
 export function chatSessionRemove(id: ID | IDS) {
   return alovaInstance.deleteWithMsg<void>(`/application/chatSession/${id}`);
 }
+
+/**
+ * 查询全部会话
+ * @param bo 会话查询条件
+ * @returns 会话列表
+ */
+export function chatSessionListAll(bo?: ChatSessionQuery) {
+  return alovaInstance.get<ChatSessionVO[]>('/application/chatSession/listAll', { params: bo });
+}

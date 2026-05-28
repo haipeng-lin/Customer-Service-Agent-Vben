@@ -57,3 +57,12 @@ export function applicationUpdate(data: ApplicationForm) {
 export function applicationRemove(id: ID | IDS) {
   return alovaInstance.deleteWithMsg<void>(`/application/application/${id}`);
 }
+
+/**
+ * 查询应用全部
+ * @param params
+ * @returns 应用全部列表
+ */
+export function applicationListAll(params?: ApplicationQuery) {
+  return alovaInstance.get<ApplicationVO[]>('/application/application/listAll', { params });
+}
