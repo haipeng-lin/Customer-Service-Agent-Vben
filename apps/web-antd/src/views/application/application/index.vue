@@ -7,6 +7,7 @@ import { ref } from "vue";
 
 import { Page, useVbenModal } from "@vben/common-ui";
 import { getPopupContainer } from "@vben/utils";
+import { useRouter } from "vue-router";
 import { Popconfirm, Space } from "antdv-next";
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from "#/adapter/vxe-table";
@@ -18,6 +19,8 @@ import {
 import { columns, querySchema } from "./data";
 
 import ApplicationModal from "./application-modal.vue";
+
+const router = useRouter();
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -78,6 +81,10 @@ async function handleDelete(row: Recordable<any>) {
   await tableApi.query();
 }
 
+function handleDetail(row: Recordable<any>) {
+  router.push(`/application/application-detail/${row.id}`);
+}
+
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
   const ids = rows.map((row: any) => row.id);
@@ -97,7 +104,7 @@ function handleMultiDelete() {
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable>
+    <BasicTable @cell-dblclick="({ row }) => router.push(`/application/application-detail/${row.id}`)">
       <template #toolbar-actions>
         <span class="pl-[7px] text-[16px]">应用列表</span>
       </template>
@@ -128,6 +135,12 @@ function handleMultiDelete() {
             @click.stop="handleEdit(row)"
           >
             {{ $t("pages.common.edit") }}
+          </action-button>
+          <action-button
+            type="primary"
+            @click.stop="handleDetail(row)"
+          >
+            详情
           </action-button>
           <Popconfirm
             :get-popup-container="getPopupContainer"
